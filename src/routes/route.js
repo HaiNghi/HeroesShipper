@@ -8,7 +8,7 @@ import Register from '../containers/Register';
 import AccountVerification from '../containers/AccountVerification';
 import DeliveryDetail from '../containers/DeliveryDetail';
 import DefaultRoute from '../containers/DefaultRoute';
-import ReceivingPackageVerification from '../components/ReceivingPackageVerification';
+import ReceivingPackageVerification from '../containers/ReceivingPackageVerification';
 import CameraScreen from '../components/CameraScreen';
 
 const MainNavigator = DrawerNavigator({

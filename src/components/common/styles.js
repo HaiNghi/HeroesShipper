@@ -17,8 +17,8 @@ const styles = {
         position: 'absolute',
         alignItems: 'center',
        
-      },
-      buttonInnerStyle: {
+    },
+    buttonInnerStyle: {
         padding: 12,
         marginLeft: 15,
         marginRight: 15,
@@ -27,15 +27,15 @@ const styles = {
         flex: 1,
         borderRadius: 7,
         opacity: 0.9,
-      },
-      textStyle: {
-          color: '#fff',
-          fontSize: 17,
-          textAlign: 'center',
-          fontWeight: 'bold',
-      },
+    },
+    textStyle: {
+        color: '#fff',
+        fontSize: 17,
+        textAlign: 'center',
+        fontWeight: 'bold',
+    },
       //Input
-      inputStyle: {
+    inputStyle: {
         color: 'black',
         fontSize: 14,
         padding: 10
@@ -57,6 +57,25 @@ const styles = {
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 10
+    },
+    //modal
+    modalContainer: {
+        margin: 20, 
+        backgroundColor: '#fff', 
+        flexWrap: 'wrap', 
+        borderRadius: 15 
+    },
+    titleStyle: { 
+        fontWeight: 'bold', 
+        textAlign: 'center', 
+        fontSize: 20, 
+        margin: 15 
+    },
+    subtitleStyle: {
+        textAlign: 'center', 
+        color: '#000', 
+        margin: 15, 
+        marginTop: 0 
     }
 };
 

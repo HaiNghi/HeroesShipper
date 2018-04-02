@@ -4,3 +4,4 @@ export * from './Inputs';
 export * from './SubmitButton';
 export * from './Spinner';
 export * from './NormalButton';
+export * from './Modals';

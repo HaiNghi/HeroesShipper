@@ -20,7 +20,13 @@ import {
     LOGIN_SUCCESS,
     LOGIN_FAIL,
     LOADING,
-    DISABLE_MODAL
+    DISABLE_MODAL,
+    VERIFY_RECEIVING_PACKAGE,
+    VERIFY_RECEIVING_PACKAGE_FAILED,
+    LOAD_SPINNER,
+    GET_PICKED_PACKAGE_LIST,
+    GET_DELIVERING_PACKAGE_LIST,
+    VERIFY_DELIVERING_SUCCESS
 } from './types';
 
 export const getCurrentLocation = () => {
@@ -32,9 +38,10 @@ export const getCurrentLocation = () => {
                     payload: position
                 });
             },
+         
             (error) => console.log(error.message),
             {
-                enableHighAccurancy: true, timeout: 20000, maximumAge: 1000 }
+                enableHighAccurancy: true, timeout: 30000, maximumAge: 0 }
         );
     };
 };
@@ -125,7 +132,7 @@ export const getPackageList = () => {
 export const getChosenPackageList = (userId) => {
     return (dispatch) => {
         console.log('OK');
-        firebase.database().ref(`package/shipper/${userId}`)
+        firebase.database().ref(`package/shipper/${userId}`).orderByChild('status')
             .on('value', snapshot => {
                 if (snapshot.val() !== null) {
                     const arr = Object.entries(snapshot.val()).map(e => Object.assign(e[1], { key: e[0] }));
@@ -196,5 +203,70 @@ export const loadSpinner = () => {
 export const disableModal = () => {
     return {
         type: DISABLE_MODAL
+    };
+};
+
+export const verifyCodeForReceivingPackage = (result) => {
+    return (dispatch) => {
+        dispatch(waitForCheck());
+        setTimeout(() => dispatch({
+            type: VERIFY_RECEIVING_PACKAGE,
+            payload: result
+        }), 500);
+    };
+};
+export const verifyCodeForReceivingPackageFailed = (result) => {
+    return (dispatch) => {
+        dispatch(waitForCheck());
+        setTimeout(() => dispatch({
+            type: VERIFY_RECEIVING_PACKAGE_FAILED,
+            payload: result
+        }), 500);
+    };
+};
+export const waitForCheck = () => {
+    return {
+        type: LOAD_SPINNER
+    };
+};
+
+export const getPickedPackageList = (userId) => {
+    return (dispatch) => {
+        console.log('OK');
+        let arr = [];
+        firebase.database().ref(`package/shipper/${userId}`).orderByChild('status').equalTo(2)
+            .on('value', snapshot => {
+                if (snapshot.val() !== null) {
+                    arr = Object.entries(snapshot.val()).map(e => Object.assign(e[1], { key: e[0] }));
+                } else {
+                    arr = [];
+                }
+                dispatch({ type: GET_PICKED_PACKAGE_LIST, payload: arr });
+        });
+    };
+};
+export const getDeliveringPackageList = (userId) => {
+    return (dispatch) => {
+        console.log('OK');
+        let arr = [];
+        firebase.database().ref(`package/shipper/${userId}`).orderByChild('status').equalTo(3)
+            .on('value', snapshot => {
+                if (snapshot.val() !== null) {
+                    arr = Object.entries(snapshot.val()).map(e => Object.assign(e[1], { key: e[0] }));
+                } else {
+                    arr = [];
+                }
+                dispatch({ type: GET_DELIVERING_PACKAGE_LIST, payload: arr });
+        });
+    };
+};
+
+export const verifyCodeForDeliveringSuccess = (result) => {
+    return (dispatch) => {
+        dispatch(waitForCheck());
+        setTimeout(() => dispatch({
+            type: VERIFY_DELIVERING_SUCCESS,
+            payload: result
+        }), 500);
     };
 };

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Image, Alert } from 'react-native';
+import { View, Image, Alert, Keyboard } from 'react-native';
 import { Container, Button, Text, Content, Item, Input, Body } from 'native-base';
 import Modal from 'react-native-modal';
 import { LoginFormStyle } from './styles';
@@ -9,6 +9,7 @@ import { Spinner } from './common';
 class Login extends Component {
     componentWillReceiveProps(nextProps) {
         if (nextProps.success !== this.props.success) {
+            Keyboard.dismiss();
             this.props.navigation.navigate('Home');
         }
     }

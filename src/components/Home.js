@@ -8,15 +8,19 @@ class Home extends Component {
     constructor(props) {
         super(props);
         this.state = { id: 0 };
+        this.timer = 0;
     }
     componentDidMount() {
         this.props.getCurrentLocation();
         this.props.getPackageList();
         AsyncStorage.getItem('user_info', (error, result) => {
-            this.setState({ id: JSON.parse(result).user_id });
+            this.setState({ id: JSON.parse(result).shipper_id });
             this.props.getChosenPackageList(this.state.id); 
+            this.props.getPickedPackageList(this.state.id);
+            this.props.getDeliveringPackageList(this.state.id);
         });
     } 
+
     render() {
         return (
             <Container>
@@ -43,6 +47,10 @@ class Home extends Component {
                         navigation={this.props.navigation}
                         route={this.props.route}
                         changeRegion={this.props.changeRegion}
+                        pickedPackageList={this.props.pickedPackageList}
+                        deliveringPackageList={this.props.deliveringPackageList}
+                        getPickedPackageList={this.props.getPickedPackageList}
+                        getDeliveringPackageList={this.props.getDeliveringPackageList}
                     />
                 }
                 

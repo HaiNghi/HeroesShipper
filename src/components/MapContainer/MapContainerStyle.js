@@ -62,19 +62,27 @@ const styles = {
         flexDirection: 'row',
         alignSelf: 'flex-end',
         justifyContent: 'space-between',
-        marginRight: 20
+        marginRight: 20,
+        marginLeft: 10
    },
+   buttonModal: { 
+        width: 20, 
+        height: 20, 
+        marginLeft: 8
+    },
     //modal show package list
     modalStyle: {
         flexDirection: 'column', 
         flex: 1, 
         marginRight: 5 
     },
-    buttonModal: { 
-        width: 30, 
-        height: 30, 
-        marginRight: 5 
+    iconStyle: {
+        width: 20, 
+        height: 20, 
+        marginLeft: 2,
+        marginRight: 5
     }
+    
 };
 
 export default styles;

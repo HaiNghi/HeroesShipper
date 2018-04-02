@@ -1,11 +1,24 @@
 import React, { Component } from 'react';
 import { Container, View, Text, Button } from 'native-base';
 import CodeInput from 'react-native-confirmation-code-input';
-import { HeaderBase } from './common';
+import Modal from 'react-native-modal';
+import { HeaderBase, Spinner, Modals } from './common';
 import { LoginFormStyle, RegisterStyle } from './styles';
 /* eslint-disable global-require */
 
 class ReceivingPackageVerification extends Component {
+    onCheckCode = (code) => {
+        this.props.waitForCheck();
+        if (this.props.navigation.state.params.status === 'receive_from_po') {
+            this.props.verifyCodeForReceivingPackage(code, this.props.navigation.state.params.packageId);
+        } else {
+            this.props.verifyCodeForDeliveringSuccess(code, this.props.navigation.state.params.packageId);
+        }
+    }
+    onDismiss = () => {
+        this.props.disableModal();
+        this.props.navigation.goBack(null);
+    }
     render() {
         return (
             <Container >
@@ -16,7 +29,13 @@ class ReceivingPackageVerification extends Component {
                 <View style={[LoginFormStyle.secondBodyStyle]}>
                     <View style={{ alignItems: 'center', height: 250 }} >
                         <Text style={[LoginFormStyle.textStyle, { marginTop: 20, fontSize: 30, marginBottom: 20 }]}>Package Confirmation</Text>
-                        <Text style={[RegisterStyle.textStyle, { color: '#000', fontSize: 16, margin: 20 }]}>Enter your OTP code to confirm .</Text>
+                        {
+                            (this.props.navigation.state.params.status === 'receive_from_po') ?
+                                <Text style={[RegisterStyle.textStyle, { color: '#000', fontSize: 16, margin: 20 }]}>Enter Package Owner's code to confirm .</Text>
+                            :
+                                <Text style={[RegisterStyle.textStyle, { color: '#000', fontSize: 16, margin: 20 }]}>Enter verified code that we sent to Receiver to confirm .</Text>
+                        }
+                        
                         <CodeInput
                                 ref="codeInputRef2"
                                 keyboardType="numeric"
@@ -28,11 +47,27 @@ class ReceivingPackageVerification extends Component {
                                 size={60}
                                 cellBorderWidth={2}
                                 codeInputStyle={{ fontWeight: '800' }}
-                                onFulfill={() => console.log('OK')}
+                                onFulfill={(isvalid, code) => this.onCheckCode(code)}
                         />
                     </View>
                     <Button full transparent onPress={() => this.props.navigation.navigate('CameraScreen')}><Text>Scan QR code</Text></Button>
-                  
+                    <Modal isVisible={this.props.loading}>
+                            <Spinner />
+                    </Modal>
+                    
+                    <Modals 
+                        isVisible={this.props.fail}
+                        title='Verify failed!' 
+                        subtitle={this.props.message}
+                        onPress={() => this.props.disableModal()}
+                    />
+                    <Modals 
+                        isVisible={this.props.success}
+                        title='Verify successfully!' 
+                        subtitle={this.props.message}
+                        onPress={() => this.onDismiss()}
+                    />
+                   
                 </View>
             </Container>
         );

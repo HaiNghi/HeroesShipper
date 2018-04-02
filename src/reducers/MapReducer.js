@@ -11,7 +11,9 @@ import {
     GET_PACKAGE_DETAIL,
     DELETE_DATA,
     GET_CHOSEN_PACKAGE_LIST_SUCCESS,
-    CHANGE_REGION
+    CHANGE_REGION,
+    GET_PICKED_PACKAGE_LIST,
+    GET_DELIVERING_PACKAGE_LIST
 } from '../actions/types';
 
 const INITIAL_STATE = { 
@@ -32,7 +34,9 @@ const INITIAL_STATE = {
     chosenPackageList: [],
     packageDetail: [],
     loading: false,
-    route: []
+    route: [],
+    pickedPackageList: [],
+    deliveringPackageList: []
 };
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATION = width / height;
@@ -176,6 +180,14 @@ export default (state = INITIAL_STATE, action) => {
         console.log(action.payload);
             return { ...state,
                 region: action.payload
+            };
+        case GET_PICKED_PACKAGE_LIST:
+            return { ...state,
+                pickedPackageList: action.payload
+            };
+        case GET_DELIVERING_PACKAGE_LIST:
+            return { ...state,
+                deliveringPackageList: action.payload
             };
         default:
             return state;

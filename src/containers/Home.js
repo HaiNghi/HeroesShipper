@@ -11,7 +11,9 @@ import {
     getPackageList,
     getPackageDetail,
     getChosenPackageList,
-    changeRegion
+    changeRegion,
+    getPickedPackageList,
+    getDeliveringPackageList
 } from '../actions';
 import { doGetPackageDetail } from '../api/api';
 
@@ -26,7 +28,9 @@ const mapStateToProps = (state) => ({
     packageDetail: state.map.packageDetail || [],
     loading: state.map.loading,
     chosenPackageList: state.map.chosenPackageList || [],
-    route: state.package.route || []
+    // route: state.package.route || [],
+    pickedPackageList: state.map.pickedPackageList || [],
+    deliveringPackageList: state.map.deliveringPackageList || []
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -59,6 +63,12 @@ const mapDispatchToProps = (dispatch) => ({
     },
     changeRegion: (region) => {
         dispatch(changeRegion(region));
+    },
+    getPickedPackageList: (userId) => {
+        dispatch(getPickedPackageList(userId));
+    },
+    getDeliveringPackageList: (userId) => {
+        dispatch(getDeliveringPackageList(userId));
     }
    
 });
