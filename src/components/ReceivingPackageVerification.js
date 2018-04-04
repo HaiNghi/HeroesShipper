@@ -18,12 +18,13 @@ class ReceivingPackageVerification extends Component {
     onDismiss = () => {
         this.props.disableModal();
         this.props.navigation.goBack(null);
+        // this.props.navigation.navigate('Home');
     }
     render() {
         return (
             <Container >
                 <HeaderBase 
-                    headerText="RECEIVING PACKAGE CONFIRMATION"
+                    headerText="PACKAGE CONFIRMATION"
                     navigation={this.props.navigation}
                 />
                 <View style={[LoginFormStyle.secondBodyStyle]}>

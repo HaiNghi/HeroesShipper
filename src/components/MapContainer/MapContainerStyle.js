@@ -60,10 +60,11 @@ const styles = {
         bottom: 10,
         position: 'absolute',
         flexDirection: 'row',
-        alignSelf: 'flex-end',
+        // alignSelf: 'flex-end',
         justifyContent: 'space-between',
-        marginRight: 20,
-        marginLeft: 10
+        alignSelf: 'center',
+        // marginRight: 20,
+        marginLeft: 10,
    },
    buttonModal: { 
         width: 20, 

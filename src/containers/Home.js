@@ -13,9 +13,10 @@ import {
     getChosenPackageList,
     changeRegion,
     getPickedPackageList,
-    getDeliveringPackageList
+    getDeliveringPackageList,
+    getPickedPackageDestinationList
 } from '../actions';
-import { doGetPackageDetail } from '../api/api';
+import { doGetPackageDetail, processUpdatingCurrentPositon } from '../api/api';
 
 const mapStateToProps = (state) => ({
     region: state.map.region,
@@ -30,7 +31,8 @@ const mapStateToProps = (state) => ({
     chosenPackageList: state.map.chosenPackageList || [],
     // route: state.package.route || [],
     pickedPackageList: state.map.pickedPackageList || [],
-    deliveringPackageList: state.map.deliveringPackageList || []
+    deliveringPackageList: state.map.deliveringPackageList || [],
+    pickedPackageDestinationList: state.map.pickedPackageDestinationList || []
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -61,16 +63,21 @@ const mapDispatchToProps = (dispatch) => ({
     getPackageDetail: (index) => {
         doGetPackageDetail(dispatch, getPackageDetail, index);
     },
-    changeRegion: (region) => {
-        dispatch(changeRegion(region));
+    changeRegion: (region, type) => {
+        dispatch(changeRegion(region, type));
     },
     getPickedPackageList: (userId) => {
         dispatch(getPickedPackageList(userId));
     },
     getDeliveringPackageList: (userId) => {
         dispatch(getDeliveringPackageList(userId));
+    },
+    getPickedPackageDestinationList: (userId) => {
+        dispatch(getPickedPackageDestinationList(userId));
+    },
+    updateCurrentLocation: (shipperId, latitude, longitude) => {
+        processUpdatingCurrentPositon(shipperId, latitude, longitude);
     }
-   
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import ReduxThunk from 'redux-thunk';
 import SplashScreen from 'react-native-splash-screen';
+import PushNotification from 'react-native-push-notification';
 import firebase from 'firebase';
 import reducers from './src/reducers';
 import AppNavigation from './src/routes/route';
@@ -28,6 +29,7 @@ export default class App extends Component {
       messagingSenderId: '124925794813'
     };
     firebase.initializeApp(config);
+    // PushNotification.cancelAllLocalNotifications();
   }
   render() {
     const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));

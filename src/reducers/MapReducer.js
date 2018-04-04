@@ -12,8 +12,10 @@ import {
     DELETE_DATA,
     GET_CHOSEN_PACKAGE_LIST_SUCCESS,
     CHANGE_REGION,
+    CHANGE_REGION_1,
     GET_PICKED_PACKAGE_LIST,
-    GET_DELIVERING_PACKAGE_LIST
+    GET_DELIVERING_PACKAGE_LIST,
+    GET_PICKED_PACKAGE_DESTINATION_LIST
 } from '../actions/types';
 
 const INITIAL_STATE = { 
@@ -36,6 +38,7 @@ const INITIAL_STATE = {
     loading: false,
     route: [],
     pickedPackageList: [],
+    pickedPackageDestinationList: [],
     deliveringPackageList: []
 };
 const { width, height } = Dimensions.get('window');
@@ -177,10 +180,24 @@ export default (state = INITIAL_STATE, action) => {
                     loading: false
             };
         case CHANGE_REGION:
-        console.log(action.payload);
+            console.log(action.payload);
             return { ...state,
-                region: action.payload
+                region: {
+                    latitude: action.payload.latitude,
+                    longitude: action.payload.longitude,
+                    latitudeDelta: LATITUDEDELTA,
+                    longitudeDelta: LONGTITUDEDELTA
+                }
             };
+        case CHANGE_REGION_1: 
+            return { ...state,
+                    region: {
+                        latitude: action.payload.latitude,
+                        longitude: action.payload.longitude,
+                        latitudeDelta: action.payload.latitudeDelta,
+                        longitudeDelta: action.payload.longitudeDelta
+                    }
+                };
         case GET_PICKED_PACKAGE_LIST:
             return { ...state,
                 pickedPackageList: action.payload
@@ -188,6 +205,10 @@ export default (state = INITIAL_STATE, action) => {
         case GET_DELIVERING_PACKAGE_LIST:
             return { ...state,
                 deliveringPackageList: action.payload
+            };
+        case GET_PICKED_PACKAGE_DESTINATION_LIST:
+            return  { ...state,
+                pickedPackageDestinationList: action.payload
             };
         default:
             return state;

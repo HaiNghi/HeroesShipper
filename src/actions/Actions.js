@@ -26,7 +26,9 @@ import {
     LOAD_SPINNER,
     GET_PICKED_PACKAGE_LIST,
     GET_DELIVERING_PACKAGE_LIST,
-    VERIFY_DELIVERING_SUCCESS
+    GET_PICKED_PACKAGE_DESTINATION_LIST,
+    VERIFY_DELIVERING_SUCCESS,
+    CHANGE_REGION_1
 } from './types';
 
 export const getCurrentLocation = () => {
@@ -142,6 +144,20 @@ export const getChosenPackageList = (userId) => {
     };
 };
 
+export const getPickedPackageDestinationList = (userId) => {
+    return (dispatch) => {
+        console.log('OK');
+        let arr = [];
+        firebase.database().ref(`package/shipper/${userId}`).orderByChild('status')
+            .on('value', snapshot => {
+                if (snapshot.val() !== null) {
+                    arr = Object.entries(snapshot.val()).map(e => Object.assign(e[1], { key: e[0] }));
+                } 
+                dispatch({ type: GET_PICKED_PACKAGE_DESTINATION_LIST, payload: arr });
+        });
+    };
+};
+
 export const getPackageDetail = (packageDetail) => {
     return {
         type: GET_PACKAGE_DETAIL,
@@ -161,11 +177,24 @@ export const choosePackage = (coordinates) => {
         payload: coordinates
     };
 };
-export const changeRegion = (region) => {
-    return {
-        type: CHANGE_REGION,
-        payload: region
+export const changeRegion = (region, status) => {
+    return (dispatch) => {
+        if (status === 'watchPosition') {
+            dispatch({
+                type: CHANGE_REGION,
+                payload: region
+            });
+        } else {
+            dispatch({
+                type: CHANGE_REGION_1,
+                payload: region
+            });
+        }
     };
+    // return {
+    //     type: CHANGE_REGION,
+    //     payload: { region, status }
+    // };
 };
 export const inputEmail = (text) => {
     return {

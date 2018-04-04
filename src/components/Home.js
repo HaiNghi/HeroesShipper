@@ -18,6 +18,7 @@ class Home extends Component {
             this.props.getChosenPackageList(this.state.id); 
             this.props.getPickedPackageList(this.state.id);
             this.props.getDeliveringPackageList(this.state.id);
+            this.props.getPickedPackageDestinationList(this.state.id);
         });
     } 
 
@@ -51,6 +52,8 @@ class Home extends Component {
                         deliveringPackageList={this.props.deliveringPackageList}
                         getPickedPackageList={this.props.getPickedPackageList}
                         getDeliveringPackageList={this.props.getDeliveringPackageList}
+                        updateCurrentLocation={this.props.updateCurrentLocation}
+                        pickedPackageDestinationList={this.props.pickedPackageDestinationList}
                     />
                 }
                 

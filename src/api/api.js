@@ -5,11 +5,6 @@ import { Alert, AsyncStorage } from 'react-native';
 // const baseURL = 'http://127.0.0.1:8000';
 const baseURL = 'http://ec2-34-231-21-217.compute-1.amazonaws.com:8000';
 let user = [];
-AsyncStorage.getItem('user_info', (error, result) => {
-        user = JSON.parse(result);
-        console.log('1', user);
-});
-
 export const processLogin = (dispatch, loginSuccess, loginFail, loadSpinner, email, password) => {
         axios.post(`${baseURL}/api/login`, {
                 email,
@@ -19,6 +14,10 @@ export const processLogin = (dispatch, loginSuccess, loginFail, loadSpinner, ema
                 switch (response.data.data.role_id) {
                         case 2: {
                                 AsyncStorage.setItem('user_info', JSON.stringify(response.data.data));
+                                AsyncStorage.getItem('user_info', (error, result) => {
+                                        user = JSON.parse(result);
+                                        console.log('1');
+                                });
                                 dispatch(loginSuccess());
                                 break;
                         }
@@ -28,15 +27,8 @@ export const processLogin = (dispatch, loginSuccess, loginFail, loadSpinner, ema
                         }
                 }
         }).catch((error) => {
-                // dispatch(loadSpinner());
                 dispatch(loginFail(error.response.status));
-                // if (error.response.status === 422) {
-                //         Alert.alert('Invalid address');
-                // } else {
-                //         Alert.alert('Login failed', 'Unable to login, either email nor password is uncorrect.');
-                // }
                 console.log(error.response);
-                // Alert(error.response.data.error.)
         });
 };
 export const doGetPackageDetail = (dispatch, getPackageDetail, index) => {
@@ -103,6 +95,20 @@ export const processVerifyCodeForDeliveringSuccess = (dispatch, verifyCodeForDel
                 dispatch(verifyCodeForDeliveringPackage(response.data.message));
         }).catch((error) => {
                 dispatch(verifyCodeForReceivingPackageFailed(error.response.data.message));
+                console.log(error.response);
+        });
+};
+
+export const processUpdatingCurrentPositon = (shipperId, currentLatitude, currentLongitude) => {
+        console.log(shipperId, currentLatitude, currentLongitude);
+        axios.put(`${baseURL}/api/shippers/${shipperId}`, 
+                { latitude: currentLatitude,
+                  longitude: currentLongitude      
+                }, 
+                { headers: { Authorization: `Bearer ${user.token}` }
+        }).then((response) => {
+                console.log(response);
+        }).catch((error) => {
                 console.log(error.response);
         });
 };
