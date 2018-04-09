@@ -14,9 +14,10 @@ import {
     changeRegion,
     getPickedPackageList,
     getDeliveringPackageList,
-    getPickedPackageDestinationList
+    getPickedPackageDestinationList,
+    findShortestRoute
 } from '../actions';
-import { doGetPackageDetail, processUpdatingCurrentPositon } from '../api/api';
+import { doGetPackageDetail, processUpdatingCurrentPositon, processFindingShortestRoute } from '../api/api';
 
 const mapStateToProps = (state) => ({
     region: state.map.region,
@@ -29,7 +30,7 @@ const mapStateToProps = (state) => ({
     packageDetail: state.map.packageDetail || [],
     loading: state.map.loading,
     chosenPackageList: state.map.chosenPackageList || [],
-    // route: state.package.route || [],
+    route: state.map.route || [],
     pickedPackageList: state.map.pickedPackageList || [],
     deliveringPackageList: state.map.deliveringPackageList || [],
     pickedPackageDestinationList: state.map.pickedPackageDestinationList || []
@@ -77,6 +78,9 @@ const mapDispatchToProps = (dispatch) => ({
     },
     updateCurrentLocation: (shipperId, latitude, longitude) => {
         processUpdatingCurrentPositon(shipperId, latitude, longitude);
+    },
+    findShortestRoute: () => {
+        processFindingShortestRoute(dispatch, findShortestRoute);
     }
 });
 

@@ -2,10 +2,12 @@ import React, { Component } from 'react';
 import { View, Alert, Image, ScrollView, Dimensions, AsyncStorage } from 'react-native';
 import { Text, Button, List, ListItem, Icon } from 'native-base'; 
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
-import MapViewDirections from 'react-native-maps-directions';
+import polyline from '@mapbox/polyline';
 import PushNotification from 'react-native-push-notification';
 import Modal from 'react-native-modal';
+import CircleButton from 'react-native-circle-button';
 import firebase from 'firebase';
+import axios from 'axios';
 // import SearchBox from '../SearchBox';
 // import SearchResult from '../SearchResults';
 import { SubmitButton, Spinner } from '../common';
@@ -40,12 +42,15 @@ class MapContainer extends Component {
                     latitudeDelta: 0,
                     longitudeDelta: 0
                 },
-                id: ''
+                id: '',
+                coords: [],
+                directionButton: true
             };
             this.mapRef = null;
         }
         componentDidMount = () => {
-           this.pushNotification();
+            this.pushNotification();
+        //    this.renderRoute();
            navigator.geolocation.getCurrentPosition(
             (position) => {
                 this.setState({ currentLocation: {
@@ -64,58 +69,32 @@ class MapContainer extends Component {
                 enableHighAccurancy: true, timeout: 20000, maximumAge: 1000, distanceFilter: 30 }
             );
         }
-       
+        // update mapview when shipper is moving
         getLocationSuccess = (position) => {
             this.props.updateCurrentLocation(user.shipper_id, position.coords.latitude, position.coords.longitude);
             this.props.changeRegion(position.coords, 'watchPosition');
         }
-       
-        componentWillReceiveProps = (nextProps) => { 
-            if (nextProps.loading) {
-                this.setState({ showSpinner: false });
-                this.props.navigation.navigate('DeliveryDetail', 
-                    {
-                        currentLocation: this.props.region, 
-                        packageDetail: nextProps.packageDetail,
-                        status: this.state.status
-                    }
-                );
-            }
+        // get shortest route between 2 coordinates
+        getShortestRouteDirections = (startLoc, destinationLoc) => {
+            axios.get(`https://maps.googleapis.com/maps/api/directions/json?origin=${startLoc}&destination=${destinationLoc}&mode=bicyling&key=${GOOGLE_MAPS_APIKEY}`)
+            .then((response) => {
+                console.log(response);
+                const points = polyline.decode(response.data.routes[0].overview_polyline.points);
+                console.log(points);
+                const coords = points.map((point) => {
+                    return {
+                        latitude: point[0],
+                        longitude: point[1]
+                    };
+                });
+                console.log(coords);
+                const newCoordsArray = [...this.state.coords, coords];
+                this.setState({ coords: newCoordsArray });
+            })
+            .catch((error) => {
+                Alert.alert(error);
+            });
         }
-        componentWillUnmount = () => {
-            navigator.geolocation.clearWatch(this.watchID);
-        }
-        onMarkerPressed = (marker, item) => {
-            setTimeout(() => 
-                this[marker].showCallout()
-                , 0);
-                // });
-            this.setState({ packageId: item.id });
-            (item.status === 2) ? this.setState({ showButton: true }) : this.setState({ showButton: false }); 
-        }
-
-        onConfirm = () => {
-            if (this.state.packageId === '') {
-                Alert.alert(
-                    'You haven\' t choose any package yet!',
-                    null,
-                    [
-                      { text: 'DISMISS', onPress: () => console.log('Ask me later pressed') },
-                    ],
-                );
-            } else {
-                Alert.alert(
-                    `Are you sure you already took the package number ${this.state.packageId}`,
-                    null,
-                    [
-                      { text: 'YES', onPress: () => this.setState({ packageId: '' }) },
-                      { text: 'NO', onPress: () => this.setState({ packageId: '' }), style: 'cancel' },
-                    ],
-                  
-                  );
-            }
-        }
-
         pushNotification = () => {
             let newPackage = '';
             const array = [];
@@ -155,7 +134,39 @@ class MapContainer extends Component {
                 }
           });
         }
-
+       
+        componentWillReceiveProps = (nextProps) => { 
+            if (nextProps.loading) {
+                this.setState({ showSpinner: false });
+                this.props.navigation.navigate('DeliveryDetail', 
+                    {
+                        currentLocation: this.props.region, 
+                        packageDetail: nextProps.packageDetail,
+                        status: this.state.status,
+                        updateDirectionButton: this.onUpdateDirectionButton.bind(this)
+                    }
+                );
+            }
+            if (nextProps.route.length > 0 && nextProps.route !== this.props.route) {
+                console.log(nextProps.route);
+                console.log('1');
+                this.renderRoute(nextProps.route);
+            }
+        }
+        componentWillUnmount = () => {
+            navigator.geolocation.clearWatch(this.watchID);
+        }
+        // show callout of that marker
+        onMarkerPressed = (marker, item) => {
+            setTimeout(() => 
+                this[marker].showCallout()
+                , 0);
+                // });
+            this.setState({ packageId: item.id });
+            (item.status === 2) ? this.setState({ showButton: true }) : this.setState({ showButton: false }); 
+        }
+        
+        // get package's information
         handleMarkerPress = (packageId, packageStatus) => {
             // const markerID = event.nativeEvent.id;
             this.setState({ showSpinner: true }, function () {
@@ -172,29 +183,24 @@ class MapContainer extends Component {
         }
         onCheckCode = (packageId) => {
             this.setState({ showDetailPackageList: false });
-            this.props.navigation.navigate('ReceivingPackageVerification', { packageId, status: 'send_to_rc' });
+            this.props.navigation.navigate('ReceivingPackageVerification', { packageId, status: 'send_to_rc', updateDirectionButton: this.onUpdateDirectionButton.bind(this) });
         }
         showDetailPackageList = () => {
-            if (this.props.pickedPackageList.length === 0 && this.props.deliveringPackageList.length === 0) {
-                Alert.alert('No trips to show! ');
-            } else {
-                this.setState({ showDetailPackageList: true });
-            }
             AsyncStorage.getItem('user_info', (error, result) => {
                 this.setState({ id: JSON.parse(result).shipper_id });
             });
+            if (this.props.pickedPackageList.length === 0 && this.props.deliveringPackageList.length === 0) {
+                Alert.alert('No trips to show! ');
+            } 
+            if (this.props.pickedPackageList.length < 2 && this.props.deliveringPackageList.length === 0) {
+                    this.props.pickedPackageList.map((item) => 
+                        this.props.navigation.navigate('ReceivingPackageVerification', { packageId: item.id, status: 'receive_from_po' })
+                    );
+            } else {
+                    this.setState({ showDetailPackageList: true });
+            }
         }
-        renderCallout = (item) => {
-            return (
-              <MapView.Callout tooltip onPress={() => this.handleMarkerPress(item.id, item.status)}>
-                <View style={styles.mapCallOut}>
-                    <Text style={{ fontSize: 12 }}><Text style={styles.labelStyle}>Destination:</Text> {item.destination_address}</Text>
-                    <Text style={{ fontSize: 12 }}><Text style={styles.labelStyle}>Earnings:</Text> {item.price} VND</Text>
-                    <Text style={{ fontSize: 12 }}><Text style={styles.labelStyle}>Distance:</Text> {item.distance} Km</Text>
-                </View>
-              </MapView.Callout>
-            );
-        }
+        
         onReceivePackage = () => {
             this.setState({ showButton: false });
             this.props.navigation.navigate('ReceivingPackageVerification', { packageId: this.state.packageId, status: 'receive_from_po' });
@@ -210,18 +216,48 @@ class MapContainer extends Component {
                 Alert.alert('You have not received the package from Package Owner yet !');
             }
         }
+        findShortestRoute = () => {
+            if (this.props.pickedPackageList.length > 0 || this.props.deliveringPackageList.length > 0) {
+                this.setState({ coords: [] });
+                this.setState({ directionButton: false });
+                this.props.findShortestRoute();
+            }
+        }
+        renderCallout = (item) => {
+            return (
+              <MapView.Callout tooltip onPress={() => this.handleMarkerPress(item.id, item.status)}>
+                <View style={styles.mapCallOut}>
+                    <Text style={{ fontSize: 12 }}><Text style={styles.labelStyle}>Destination:</Text> {item.destination_address}</Text>
+                    <Text style={{ fontSize: 12 }}><Text style={styles.labelStyle}>Earnings:</Text> {item.price} VND</Text>
+                    <Text style={{ fontSize: 12 }}><Text style={styles.labelStyle}>Distance:</Text> {item.distance} Km</Text>
+                </View>
+              </MapView.Callout>
+            );
+        }
+         // get 2 locations ' coordinates to map
+        renderRoute(route) {
+            console.log(route);
+            let i = 0;
+                for (i = 0; i < route.length; i++) {
+                    if (i === route.length - 1) {
+                        break;
+                    } else {
+                        this.getShortestRouteDirections(route[i], route[i + 1]);
+                    }
+                }
+        }
+        // change directionButton 's state
+        onUpdateDirectionButton = () => {
+            if (this.props.pickedPackageList.length > 0 || this.props.deliveringPackageList.length > 0) {
+                this.setState({ directionButton: true });
+            } else {
+                this.setState({ coords: [] });
+                this.setState({ directionButton: false });
+            }
+        }
         render() {
             const {
                 region, 
-                // toogleSearchResult, 
-                // getAddressPredictions, 
-                // resultTypes, 
-                // predictions,
-                // getSelectedAddress,
-                // getPickUp,
-                // pickUp,
-                // deleteResultAddress,
-                // showDropOff,
                 changeRegion,
                 } = this.props;
             return (
@@ -240,16 +276,6 @@ class MapContainer extends Component {
                         showsUserLocation
                         followsUserLocation
                     >
-                    {/* <MapView.Marker 
-                        coordinate={{
-                            latitude: this.state.currentLocation.latitude,
-                            longitude: this.state.currentLocation.longitudeDelta,
-                            latitudeDelta: LATITUDEDELTA,
-                            longitudeDelta: LONGTITUDEDELTA
-                        }}
-                        pinColor='red' 
-                        identifier={'1'}
-                    /> */}
 
                     {
                         this.props.packageList.map((item) => {
@@ -313,44 +339,33 @@ class MapContainer extends Component {
                         })
                     }
 
-                    {/* {
-                        this.props.pickedPackageList.map((item) => {
+                    {
+                        this.state.coords.map((coords, index) => {
                             return (
-                                <MapViewDirections 
-                                    origin={{ latitude: item.pickup_latitude, longitude: item.pickup_longitude }}
-                                    destination={{ latitude: item.destination_latitude, longitude: item.destination_longitude }}
-                                    apikey={GOOGLE_MAPS_APIKEY}
-                                    strokeWidth={3}
-                                    strokeColor="hotpink" 
-                                    mode="driving"
+                                <MapView.Polyline
+                                index={index}
+                                coordinates={coords}
+                                strokeWidth={5}
+                                strokeColor="blue"
+                                key={index}
                                 />
                             );
                         })
-                    } */}
+                    }
 
                     </MapView>
-        
-                    {/* <SearchBox 
-                        toogleSearchResult={toogleSearchResult} 
-                        getAddressPredictions={getAddressPredictions} 
-                        region={region}
-                        getPickUp={getPickUp}
-                        pickUp={pickUp}
-                        deleteResultAddress={deleteResultAddress}
-                        showDropOf={showDropOff}
-                    />
-                        
-                    { (resultTypes.pickUp) &&
-                        <SearchResult 
-                            predictions={predictions} getSelectedAddress={getSelectedAddress}
-                        />
-                    } */}
-                  {/* {
-                      (this.state.showButton) &&
-                        <SubmitButton onPress={() => this.onReceivePackage()}> 
-                            RECEIVE PACKAGE
-                        </SubmitButton>
-                  } */}
+                    <View style={{ flex: 4 / 5, top: 15, position: 'absolute', flexDirection: 'row', alignSelf: 'flex-end', marginRight: 10}}>
+                    {
+                        (this.state.directionButton) ?
+                            <Button transparent onPress={() => this.findShortestRoute()}>
+                                <Image source={require('../image/turn-right-sign.png')} style={{ width: 50, height: 50 }} />
+                            </Button>
+                        :
+                            <Button disabled transparent>
+                                <Image source={require('../image/turn-right-sign-disable.png')} style={{ width: 50, height: 50 }} />
+                            </Button>
+                    }
+                    </View>
                     <View style={styles.buttonWrapper} >
                         <Button 
                             /* iconLeft  */
@@ -369,9 +384,8 @@ class MapContainer extends Component {
                             }
                             
                         </Button>
+                        {/* <CircleButton size={45} onPress={() => alert('OK')} /> */}
                     </View>
-                   
-                   
                     <Modal isVisible={this.state.showDetailPackageList} style={styles.modalStyle}>
                         <View style={{ flexWrap: 'wrap', flex: 4 / 5 }}>
                             <ScrollView 

@@ -28,3 +28,4 @@ export const GET_PICKED_PACKAGE_LIST = 'get_picked_package_list';
 export const GET_DELIVERING_PACKAGE_LIST = 'get_delivering_package_list';
 export const GET_PICKED_PACKAGE_DESTINATION_LIST = 'get_picked_package_destination_list';
 export const VERIFY_DELIVERING_SUCCESS = 'verify_delivering_success';
+export const FIND_SHORTEST_ROUTE = 'find_shortest_route';

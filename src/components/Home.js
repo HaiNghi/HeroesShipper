@@ -54,6 +54,8 @@ class Home extends Component {
                         getDeliveringPackageList={this.props.getDeliveringPackageList}
                         updateCurrentLocation={this.props.updateCurrentLocation}
                         pickedPackageDestinationList={this.props.pickedPackageDestinationList}
+                        findShortestRoute={this.props.findShortestRoute}
+                        route={this.props.route}
                     />
                 }
                 

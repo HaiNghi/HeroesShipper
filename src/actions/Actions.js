@@ -28,7 +28,8 @@ import {
     GET_DELIVERING_PACKAGE_LIST,
     GET_PICKED_PACKAGE_DESTINATION_LIST,
     VERIFY_DELIVERING_SUCCESS,
-    CHANGE_REGION_1
+    CHANGE_REGION_1,
+    FIND_SHORTEST_ROUTE
 } from './types';
 
 export const getCurrentLocation = () => {
@@ -121,12 +122,15 @@ export const deleteResultAddress = (text) => {
 export const getPackageList = () => {
     return (dispatch) => {
         console.log('OK');
+        let arr = [];
         firebase.database().ref('package/available/')
             .on('value', snapshot => {
                 if (snapshot.val() !== null) {
-                    const arr = Object.entries(snapshot.val()).map(e => Object.assign(e[1], { key: e[0] }));
-                    dispatch({ type: GET_PACKAGE_LIST_SUCCESS, payload: arr });
+                    arr = Object.entries(snapshot.val()).map(e => Object.assign(e[1], { key: e[0] }));
+                } else {
+                    arr = [];
                 }
+                dispatch({ type: GET_PACKAGE_LIST_SUCCESS, payload: arr });
         });
     };
 };
@@ -134,12 +138,15 @@ export const getPackageList = () => {
 export const getChosenPackageList = (userId) => {
     return (dispatch) => {
         console.log('OK');
+        let arr = [];
         firebase.database().ref(`package/shipper/${userId}`).orderByChild('status')
             .on('value', snapshot => {
                 if (snapshot.val() !== null) {
-                    const arr = Object.entries(snapshot.val()).map(e => Object.assign(e[1], { key: e[0] }));
-                    dispatch({ type: GET_CHOSEN_PACKAGE_LIST_SUCCESS, payload: arr });
+                    arr = Object.entries(snapshot.val()).map(e => Object.assign(e[1], { key: e[0] }));
+                } else {
+                    arr = [];
                 }
+                dispatch({ type: GET_CHOSEN_PACKAGE_LIST_SUCCESS, payload: arr });
         });
     };
 };
@@ -152,7 +159,9 @@ export const getPickedPackageDestinationList = (userId) => {
             .on('value', snapshot => {
                 if (snapshot.val() !== null) {
                     arr = Object.entries(snapshot.val()).map(e => Object.assign(e[1], { key: e[0] }));
-                } 
+                } else {
+                    arr = [];
+                }
                 dispatch({ type: GET_PICKED_PACKAGE_DESTINATION_LIST, payload: arr });
         });
     };
@@ -297,5 +306,12 @@ export const verifyCodeForDeliveringSuccess = (result) => {
             type: VERIFY_DELIVERING_SUCCESS,
             payload: result
         }), 500);
+    };
+};
+
+export const findShortestRoute = (result) => {
+    return {
+        type: FIND_SHORTEST_ROUTE,
+        payload: result
     };
 };

@@ -17,6 +17,9 @@ class ReceivingPackageVerification extends Component {
     }
     onDismiss = () => {
         this.props.disableModal();
+        if (this.props.navigation.state.params.status === 'send_to_rc') {
+            this.props.navigation.state.params.updateDirectionButton();
+        }
         this.props.navigation.goBack(null);
         // this.props.navigation.navigate('Home');
     }

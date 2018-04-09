@@ -18,6 +18,7 @@ class DeliveryDetail extends Component {
     componentWillReceiveProps(nextProps) {
         if (nextProps.route !== this.props.route) {
             this.setState({ showSpinner: false });
+            this.props.navigation.state.params.updateDirectionButton();
             this.onDismiss();
         }
     }
@@ -27,6 +28,7 @@ class DeliveryDetail extends Component {
     }
 
     onDismiss() {
+        // this.props.navigation.state.params.updateRoute();
         this.props.navigation.goBack();
     }
     render() {

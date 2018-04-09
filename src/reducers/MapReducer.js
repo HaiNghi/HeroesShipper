@@ -15,7 +15,8 @@ import {
     CHANGE_REGION_1,
     GET_PICKED_PACKAGE_LIST,
     GET_DELIVERING_PACKAGE_LIST,
-    GET_PICKED_PACKAGE_DESTINATION_LIST
+    GET_PICKED_PACKAGE_DESTINATION_LIST,
+    FIND_SHORTEST_ROUTE
 } from '../actions/types';
 
 const INITIAL_STATE = { 
@@ -207,8 +208,13 @@ export default (state = INITIAL_STATE, action) => {
                 deliveringPackageList: action.payload
             };
         case GET_PICKED_PACKAGE_DESTINATION_LIST:
-            return  { ...state,
+            return { ...state,
                 pickedPackageDestinationList: action.payload
+            };
+        case FIND_SHORTEST_ROUTE:
+            console.log(action.payload);
+            return { ...state,
+                route: action.payload
             };
         default:
             return state;

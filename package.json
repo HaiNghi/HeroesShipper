@@ -7,6 +7,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@mapbox/polyline": "^1.0.0",
     "axios": "^0.18.0",
     "eslint-config-rallycoding": "^3.2.0",
     "firebase": "^4.11.0",
@@ -15,6 +16,7 @@
     "react-modal": "^3.3.1",
     "react-native": "0.53.3",
     "react-native-camera": "^1.0.2",
+    "react-native-circle-button": "^1.0.9",
     "react-native-confirmation-code-input": "^1.0.4",
     "react-native-google-maps": "^1.0.0",
     "react-native-google-places": "^2.4.2",
