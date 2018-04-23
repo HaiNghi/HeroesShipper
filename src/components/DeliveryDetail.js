@@ -1,21 +1,27 @@
 import React, { Component } from 'react';
-import { Image } from 'react-native';
+import { Image, AsyncStorage, Alert } from 'react-native';
 import { Container, View, Text, Left, Right } from 'native-base';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import Modal from 'react-native-modal';
-import { HeaderBase, Spinner, SubmitButton } from './common';
+import { HeaderBase, Spinner, SubmitButton, Modals } from './common';
 import { DeliveryDetailStyle, styles } from './styles';
 /* eslint-disable global-require */
-
+let user = [];
 class DeliveryDetail extends Component {
     constructor(props) {
         super(props);
-        this.state = { showSpinner: false };
+        this.state = { showModal: false };
+        AsyncStorage.getItem('user_info', (error, result) => {
+            user = JSON.parse(result);
+        });
     }
     componentDidMount() {
         this.props.deleteData();
     }
     componentWillReceiveProps(nextProps) {
+        if (nextProps.error !== this.props.error && nextProps.error) {
+            this.setState({ showModal: true });
+        }
         if (nextProps.route !== this.props.route) {
             this.setState({ showSpinner: false });
             this.props.navigation.state.params.updateDirectionButton();
@@ -23,13 +29,21 @@ class DeliveryDetail extends Component {
         }
     }
     onChoosePackage = (packageId) => {
-        this.setState({ showSpinner: true });
-        this.props.choosePackage(packageId);
+        const { numberOfPackage } = this.props.navigation.state.params;
+            if (user.is_online !== 1) Alert.alert('You cannot pick up a new package since you are in offline mode'); 
+            else {
+                if ((user.rating > 3 && numberOfPackage < 4) || (user.rating < 4 && numberOfPackage < 3)) {
+                    this.props.waitForCheck();
+                    this.props.choosePackage(packageId);
+                } else {
+                    Alert.alert('You reached your maximum packages!');
+                }
+            }
     }
 
     onDismiss() {
         // this.props.navigation.state.params.updateRoute();
-        this.props.navigation.goBack();
+        this.props.navigation.goBack(null);
     }
     render() {
         const { packageDetail, status } = this.props.navigation.state.params;
@@ -50,12 +64,12 @@ class DeliveryDetail extends Component {
                     </View>
                     <View style={DeliveryDetailStyle.viewContainer} >
                         <View style={DeliveryDetailStyle.innerWrapper}>
-                            <Left style={DeliveryDetailStyle.contentPosition}>
+                            <Left style={[DeliveryDetailStyle.contentPosition, { marginRight: 5 }]}>
                                 <Text style={[DeliveryDetailStyle.textStyle, { margin: 5, fontSize: 20 }]}>SENDER</Text>
                                 <Text style={[DeliveryDetailStyle.textStyle]}>{packageDetail.user.first_name}</Text>
                                 <Text style={DeliveryDetailStyle.textStyle}>{packageDetail.pickup_location_address}</Text>
                             </Left>
-                            <Right style={DeliveryDetailStyle.contentPosition}>
+                            <Right style={[DeliveryDetailStyle.contentPosition, { marginLeft: 5 }]}>
                                 <Text style={[DeliveryDetailStyle.textStyle, { margin: 5, fontSize: 20 }]}>RECEIVER</Text>
                                 <Text style={DeliveryDetailStyle.textStyle}>{packageDetail.receiver_name}</Text>
                                 <Text style={DeliveryDetailStyle.textStyle}>{packageDetail.destination_address}</Text>
@@ -90,7 +104,7 @@ class DeliveryDetail extends Component {
                                 PICK
                             </SubmitButton>
                         }
-                        { 
+                        {/* { 
                             (status === 2) &&
                             <SubmitButton 
                                 onPress={() => console.log('ABC')} 
@@ -98,14 +112,20 @@ class DeliveryDetail extends Component {
                             >
                                 RECEIVE PACKAGE
                             </SubmitButton>
-                        }
+                        } */}
                         </View>
                     </View>
-                    <Modal isVisible={this.state.showSpinner} >
+                    <Modal isVisible={this.props.loading} >
                         <View style={styles.spinnerContainer}>
                             <Spinner />
                         </View>
                     </Modal>
+                    <Modals 
+                        isVisible={this.state.showModal}
+                        title='This package has been picked up!'
+                        subtitle='Please choose the other packages'
+                        onPress={() => { this.setState({ showModal: false }); this.props.navigation.navigate.goBack(); }}
+                    />
                 </Container>
             </Container>
         );

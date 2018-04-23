@@ -4,7 +4,10 @@ import {
     VERIFY_RECEIVING_PACKAGE,
     VERIFY_RECEIVING_PACKAGE_FAILED,
     DISABLE_MODAL,
-    VERIFY_DELIVERING_SUCCESS
+    VERIFY_DELIVERING_SUCCESS,
+    GET_HISTORY_LIST,
+    GET_OUT_COME,
+    CHOOSE_PACKAGE_ERROR
 } from '../actions/types';
 
 const INITIAL_STATE = { 
@@ -12,15 +15,22 @@ const INITIAL_STATE = {
     loading: false,
     success: false,
     message: '',
+    historyList: [],
+    outCome: '',
     fail: false,
+    error: false
 };
 
 export default (state = INITIAL_STATE, action) => {
-    console.log(action);
     switch (action.type) {
         case CHOOSE_PACKAGE:
             return { ...state,
-                    route: action.payload
+                    route: action.payload,
+                    error: false
+            };
+        case CHOOSE_PACKAGE_ERROR:
+            return { ...state,
+                error: true
             };
         case LOAD_SPINNER: 
             return { ...state,
@@ -45,6 +55,14 @@ export default (state = INITIAL_STATE, action) => {
             return { ...state,
                 success: true,
                 message: action.payload
+            };
+        case GET_HISTORY_LIST: 
+            return { ...state,
+                    historyList: action.payload
+            };
+        case GET_OUT_COME: 
+            return { ...state,
+                    outCome: action.payload
             };
         default:
             return state;

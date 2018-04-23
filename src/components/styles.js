@@ -63,6 +63,11 @@ export const SlideMenuStyle = StyleSheet.create({
         alignSelf: 'center',
         fontSize: 15,
     },
+    avatar: { 
+        width: 90, 
+        height: 90, 
+        marginBottom: 10 
+    },
 });
 
 export const RegisterStyle = StyleSheet.create({
@@ -159,6 +164,7 @@ export const DeliveryDetailStyle = StyleSheet.create({
     textStyle: {
         color: '#fff',
         margin: 5,
+        textAlign: 'justify'
     },
     imageStyle: {
         width: 80,
@@ -172,4 +178,23 @@ export const DeliveryDetailStyle = StyleSheet.create({
         marginTop: 30 
     }
 });
+
+export const HistoryStyle = StyleSheet.create(
+    {
+        container: { 
+            alignSelf: 'center', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            margin: 15 
+        },
+        title: { 
+            fontSize: 16, 
+            textAlign: 
+            'center', 
+            fontWeight: 
+            'bold', 
+            marginBottom: 20
+        }
+    }
+);
  

@@ -8,8 +8,8 @@ const configure = () => {
 
         console.log('TOKEN:', token); 
     },
-    onNotification: (notification) => {
-            console.log('NOTIFICATION:', notification);
+    onNotification: (notification, navigation) => {
+        console.log('NOTIFICATION:', notification);
         // process the notification
         // required on iOS only
         notification.finish(PushNotificationIOS.FetchResult.NoData);
@@ -25,31 +25,10 @@ const configure = () => {
     requestPermissions: true,
 
     });
+    return PushNotification;
 };
 
-const localNotification = () => {
-    PushNotification.localNotification({
-        alertAction: 'hoan dep trai',
-        title: 'Notification Title',
-        message: 'Notification Message',
-        playSound: true,
-        soundName: 'default',
-        userInfo: { id: 'abcd' }
-    });
-};
-const localNotificationSchedule = () => {
-    PushNotification.localNotificationSchedule({
-        message: 'My Notification Message', // (required)
-        date: new Date(Date.now() + (10 * 1000)), // in 60 secs
-        userInfo: { id: 'abcd' }
-    });
-};   
-const cancelLocalNotifications = (id) => {
-    PushNotification.cancelLocalNotifications(id);
-};   
+ 
 export {
     configure,
-    localNotification,
-    localNotificationSchedule,
-    cancelLocalNotifications
 };

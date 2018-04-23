@@ -12,40 +12,51 @@ class Home extends Component {
     }
     componentDidMount() {
         this.props.getCurrentLocation();
-        this.props.getPackageList();
+        // this.props.getSameLocationPackageList();
         AsyncStorage.getItem('user_info', (error, result) => {
-            this.setState({ id: JSON.parse(result).shipper_id });
-            this.props.getChosenPackageList(this.state.id); 
-            this.props.getPickedPackageList(this.state.id);
-            this.props.getDeliveringPackageList(this.state.id);
-            this.props.getPickedPackageDestinationList(this.state.id);
+            if (result !== null) {
+                this.setState({ id: JSON.parse(result).shipper_id });
+                this.props.getPackageList(JSON.parse(result).shipper_id);
+                this.props.getAllPickedPackageList(this.state.id);
+                this.props.getChosenPackageList(this.state.id); 
+                this.props.getPickedPackageList(this.state.id);
+                this.props.getDeliveringPackageList(this.state.id);
+                this.props.getPickedPackageDestinationList(this.state.id);
+            }
         });
     } 
 
     render() {
         return (
             <Container>
-                <HeaderForHome headerText="Shipper" navigation={this.props.navigation} />
+                <HeaderForHome 
+                        headerText="Shipper" navigation={this.props.navigation} 
+                        pickedPackageList={this.props.pickedPackageList}
+                        deliveringPackageList={this.props.deliveringPackageList}
+                        isOnline={this.props.isOnline}
+                        isOnlineError={this.props.inOnlineError}
+                />
                 {this.props.region.latitude &&
                     <MapContainer 
                         region={this.props.region} 
-                        /* toogleSearchResult={this.props.toogleSearchResult}
                         getAddressPredictions={this.props.getAddressPredictions}
-                        resultTypes={this.props.resultTypes}
                         predictions={this.props.predictions}
                         getSelectedAddress={this.props.getSelectedAddress}
-                        getPickUp={this.props.getPickUp}
-                        pickUp={this.props.pickUp}
-                        currentLocation={this.props.currentLocation}
+                        getDropOff={this.props.getDropOff}
+                        dropOff={this.props.dropOff}
                         deleteResultAddress={this.props.deleteResultAddress}
-                        deleted={this.props.deleted}
-                        showDropOff={false} */
+                        toogle={this.props.toogle}
+                        haveFinalDestination={this.props.haveFinalDestination}
+                        finalDestination={this.props.finalDestination}
+                        isExisted={this.props.isExisted}
+                        navigation={this.props.navigation}
                         packageList={this.props.packageList}
+                        sameLocationPackageList={this.props.sameLocationPackageList}
+                        differentLocationPackageList={this.props.differentLocationPackageList}
                         chosenPackageList={this.props.chosenPackageList}
                         getPackageDetail={this.props.getPackageDetail}
                         packageDetail={this.props.packageDetail}
                         loading={this.props.loading}
-                        navigation={this.props.navigation}
                         route={this.props.route}
                         changeRegion={this.props.changeRegion}
                         pickedPackageList={this.props.pickedPackageList}
@@ -56,6 +67,13 @@ class Home extends Component {
                         pickedPackageDestinationList={this.props.pickedPackageDestinationList}
                         findShortestRoute={this.props.findShortestRoute}
                         route={this.props.route}
+                        deleteData={this.props.deleteData}
+                        getOneLocationPackageList={this.props.getOneLocationPackageList}
+                        oneLocationPackageList={this.props.oneLocationPackageList}
+                        getOneLocationPickedPackageList={this.props.getOneLocationPickedPackageList}
+                        oneLocationPickedPackageList={this.props.oneLocationPickedPackageList}
+                        allPackageList={this.props.allPackageList}
+                        multiPackageAtOneLocationList={this.props.multiPackageAtOneLocationList}
                     />
                 }
                 

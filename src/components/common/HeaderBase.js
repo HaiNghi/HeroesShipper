@@ -5,7 +5,6 @@ import styles from './styles';
 const HeaderBase = ({ headerText, navigation, left, right, onPress, previousPage }) => {
     const { goBack } = navigation;
 
-    console.log(previousPage);
     function onButtonPress() {
         const back = (previousPage == null);
         if (back) goBack(null); 

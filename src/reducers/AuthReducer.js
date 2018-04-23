@@ -4,7 +4,10 @@ import {
    LOGIN_SUCCESS,
    LOGIN_FAIL,
    LOADING,
-   DISABLE_MODAL
+   DISABLE_MODAL,
+   LOG_OUT,
+   IS_ONLINE,
+   IS_ONLINE_ERROR
 } from '../actions/types';
 
 const INITIAL_STATE = { 
@@ -16,6 +19,9 @@ const INITIAL_STATE = {
     fail: false,
     errorCode: '',
     showModal: false,
+    logOutSuccess: false,
+    status: false,
+    isOnlineError: false
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -46,12 +52,28 @@ export default (state = INITIAL_STATE, action) => {
         case LOADING: {
             return { ...state,
                     loading: !state.loading,
-             };
+            };
         }
         case DISABLE_MODAL: {
             return { ...state,
                     showModal: false,
                     password: ''
+            };
+        }
+        case LOG_OUT: {
+            return { ...INITIAL_STATE,
+                logOutSuccess: true,
+            };
+        }
+        case IS_ONLINE: {
+            return { ...state,
+                status: !state.status,
+                isOnlineError: false
+            };
+        }
+        case IS_ONLINE_ERROR: {
+            return { ...state,
+                isOnlineError: true
             };
         }
         default:

@@ -75,14 +75,61 @@ const styles = {
     modalStyle: {
         flexDirection: 'column', 
         flex: 1, 
-        marginRight: 5 
+        marginRight: 20
     },
     iconStyle: {
         width: 20, 
         height: 20, 
         marginLeft: 2,
         marginRight: 5
+    },
+
+    // modal show package info in package list
+    packageInfoModal: { 
+        margin: 20, 
+        backgroundColor: '#fff', 
+        borderRadius: 10 
+    },
+    innerWrapper: { 
+        flexWrap: 'wrap', 
+        flexDirection: 'row', 
+        padding: 10 
+    },
+    packageId: { 
+        textAlign: 'center', 
+        fontWeight: 'bold', 
+        fontSize: 14, 
+        margin: 10 
+    },
+    straightLine: { 
+        borderWidth: 0.4, 
+        borderColor: 'gray', 
+        marginTop: 7 
+    },
+
+    // receive button
+    viewContainer: {
+        flexDirection: 'row', 
+        marginRight: 10, 
+        alignItems: 'center'
+    },
+    titleStyle: {
+        textAlign: 'center', 
+        padding: 10, 
+        fontSize: 16
+    },
+    numberViewContainer: {
+        width: 20, 
+        height: 20, 
+        borderRadius: 5, 
+        backgroundColor: '#fff', 
+        alignItems: 'center' 
+    },
+    numberText: {
+        color: '#000', 
+        fontWeight: 'bold'
     }
+
     
 };
 

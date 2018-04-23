@@ -3,45 +3,59 @@ import { connect } from 'react-redux';
 import Home from '../components/Home';
 import {
     getCurrentLocation, 
-    toogleSearchResult,
     getAddressPredictions,
     getSelectedAddress,
-    getPickUp,
     deleteResultAddress,
     getPackageList,
+    getSameLocationPackageList,
+    getOneLocationPackageList,
     getPackageDetail,
     getChosenPackageList,
     changeRegion,
     getPickedPackageList,
     getDeliveringPackageList,
     getPickedPackageDestinationList,
-    findShortestRoute
+    findShortestRoute,
+    deleteData,
+    isOnline,
+    getOneLocationPickedPackageList,
+    getAllPickedPackageList,
+    getDropOff,
+    haveFinalDestination
 } from '../actions';
-import { doGetPackageDetail, processUpdatingCurrentPositon, processFindingShortestRoute } from '../api/api';
+import { doGetPackageDetail, 
+        processUpdatingCurrentPositon, 
+        processFindingShortestRoute,
+        processIsOnline
+} from '../api/api';
 
 const mapStateToProps = (state) => ({
     region: state.map.region,
-    resultTypes: state.map.resultTypes || {},
+    toogle: state.map.toogle,
     predictions: state.map.predictions || [],
-    pickUp: state.map.pickUp,
-    currentLocation: state.map.currentLocation,
-    deleted: state.map.deleted,
+    dropOff: state.map.dropOff,
+    isExisted: state.map.isExisted,
+    finalDestination: state.map.finalDestination || {},
     packageList: state.map.packageList || [],
+    sameLocationPackageList: state.map.sameLocationPackageList || [],
+    oneLocationPackageList: state.map.oneLocationPackageList || [],
+    differentLocationPackageList: state.map.differentLocationPackageList || [],
     packageDetail: state.map.packageDetail || [],
     loading: state.map.loading,
     chosenPackageList: state.map.chosenPackageList || [],
+    oneLocationPickedPackageList: state.map.oneLocationPickedPackageList || [],
     route: state.map.route || [],
     pickedPackageList: state.map.pickedPackageList || [],
     deliveringPackageList: state.map.deliveringPackageList || [],
-    pickedPackageDestinationList: state.map.pickedPackageDestinationList || []
+    pickedPackageDestinationList: state.map.pickedPackageDestinationList || [],
+    isOnlineError: state.auth.isOnlineError,
+    allPackageList: state.map.allPackageList,
+    multiPackageAtOneLocationList: state.map.multiPackageAtOneLocationList || []
 });
 
 const mapDispatchToProps = (dispatch) => ({
     getCurrentLocation: () => {
         dispatch(getCurrentLocation());
-    },
-    toogleSearchResult: (text) => {
-        dispatch(toogleSearchResult(text));
     },
     getAddressPredictions: (text, { region }) => {
         dispatch(getAddressPredictions(text, { region }));
@@ -49,14 +63,17 @@ const mapDispatchToProps = (dispatch) => ({
     getSelectedAddress: (placeID) => {
         dispatch(getSelectedAddress(placeID));
     },
-    getPickUp: (text) => {
-        dispatch(getPickUp(text));
-    },
     deleteResultAddress: (text) => {
         dispatch(deleteResultAddress(text));
     },
-    getPackageList: () => {
-        dispatch(getPackageList());
+    getPackageList: (userId) => {
+        dispatch(getPackageList(userId));
+    },
+    getSameLocationPackageList: () => {
+        dispatch(getSameLocationPackageList());
+    },
+    getOneLocationPackageList: (item) => {
+        dispatch(getOneLocationPackageList(item));
     },
     getChosenPackageList: (userId) => {
         dispatch(getChosenPackageList(userId));
@@ -67,6 +84,9 @@ const mapDispatchToProps = (dispatch) => ({
     changeRegion: (region, type) => {
         dispatch(changeRegion(region, type));
     },
+    getDropOff: (text) => {
+        dispatch(getDropOff(text));
+    },
     getPickedPackageList: (userId) => {
         dispatch(getPickedPackageList(userId));
     },
@@ -76,11 +96,26 @@ const mapDispatchToProps = (dispatch) => ({
     getPickedPackageDestinationList: (userId) => {
         dispatch(getPickedPackageDestinationList(userId));
     },
+    getOneLocationPickedPackageList: (userId, item) => {
+        dispatch(getOneLocationPickedPackageList(userId, item));
+    },
     updateCurrentLocation: (shipperId, latitude, longitude) => {
         processUpdatingCurrentPositon(shipperId, latitude, longitude);
     },
-    findShortestRoute: () => {
-        processFindingShortestRoute(dispatch, findShortestRoute);
+    findShortestRoute: (latitude, longitude) => {
+        processFindingShortestRoute(dispatch, findShortestRoute, latitude, longitude);
+    },
+    deleteData: () => {
+        dispatch(deleteData());
+    },
+    isOnline: () => {
+        processIsOnline(dispatch, isOnline);
+    },
+    getAllPickedPackageList: (userId) => {
+        dispatch(getAllPickedPackageList(userId));
+    },
+    haveFinalDestination: () => {
+        dispatch(haveFinalDestination());
     }
 });
 

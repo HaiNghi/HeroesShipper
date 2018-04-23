@@ -1,10 +1,8 @@
 import { Dimensions } from 'react-native';
 import { 
     GET_CURRENT_LOCATION, 
-    TOOGLE_SEARCH_RESULT, 
     GET_ADDRESS_PREDICTIONS,
     GET_SELECTED_ADDRESS,
-    GET_PICK_UP,
     GET_DROP_OFF,
     DELETE_RESULT_ADDRESS,
     GET_PACKAGE_LIST_SUCCESS,
@@ -16,31 +14,43 @@ import {
     GET_PICKED_PACKAGE_LIST,
     GET_DELIVERING_PACKAGE_LIST,
     GET_PICKED_PACKAGE_DESTINATION_LIST,
-    FIND_SHORTEST_ROUTE
+    FIND_SHORTEST_ROUTE,
+    REFRESH_DATA,
+    GET_SAME_LOCATION_PACKAGE_LIST_SUCCESS,
+    GET_DIFFERENT_LOCATION_PACKAGE_LIST_SUCCESS,
+    GET_ONE_LOCATION_PACKAGE_LIST,
+    GET_ONE_LOCATION_PICKED_PACKAGE_LIST,
+    GET_ALL_PICKED_PACKAGE_LIST,
+    GET__LIST_HAVING_MULTI_CHOSEN_PACKAGE_AT_ONE_LOCATION,
+    HAVE_FINAL_DESTINATION
 } from '../actions/types';
 
+// import * as Type from '../action/types';
 const INITIAL_STATE = { 
-    region: {}, 
-    inputData: {}, 
-    resultTypes: {}, 
+    region: {},   
     predictions: {},
-    pickUp: '',
     dropOff: '',
-    pickUpObj: {},
     dropOffObj: {},
-    nextRegion: {},
-    pickUpRegion: {},
+    finalDestination: { latitude: null, longitude: null },
     currentLocation: { pickUp: false, dropOff: false },
     arrayMarker: [],
-    deleted: false,
     packageList: [],
+    sameLocationPackageList: [],
+    oneLocationPackageList: [],
+    differentLocationPackageList: [],
     chosenPackageList: [],
+    oneLocationPickedPackageList: [],
     packageDetail: [],
     loading: false,
     route: [],
     pickedPackageList: [],
     pickedPackageDestinationList: [],
-    deliveringPackageList: []
+    deliveringPackageList: [],
+    allPackageList: [],
+    multiPackageAtOneLocationList: [],
+    error: false,
+    toogle: false,
+    isExisted: false
 };
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATION = width / height;
@@ -61,114 +71,73 @@ export default (state = INITIAL_STATE, action) => {
                         longitudeDelta: LONGTITUDEDELTA
                 },
                 
-                pickUpRegion: {
-                    latitude: LATITUDE,
-                    longitude: LONGTITUDE,
-                    latitudeDelta: LATITUDEDELTA,
-                    longitudeDelta: LONGTITUDEDELTA
-                },
-                pickUp: '',
-                dropOff: '',
-                nextRegion: {
-                    latitude: null,
-                    longitude: null,
-                    latitudeDelta: null,
-                    longitudeDelta: null
-                },
-                };
-            }
+            };
+        }
        
-        case GET_PICK_UP:
-            return { ...state, 
-                    pickUp: action.payload,
-                    region: state.pickUpRegion,
-            };
-        case GET_DROP_OFF:
-            return { ...state, 
-                    dropOff: action.payload,
-            };
-        case TOOGLE_SEARCH_RESULT: {
-            if (action.payload === 'pickUp') {
-                return { ...state, 
-                        resultTypes: { pickUp: true, dropOff: false }, 
-                        predictions: {},
-                     };
+        case GET_DROP_OFF: {
+            if (action.payload === '') {
+                return { ...state,
+                    toogle: false,
+                    dropOff: action.payload
+                };
             } else {
                 return { ...state, 
-                    resultTypes: { pickUp: false, dropOff: true }, 
-                    predictions: {},
+                    dropOff: action.payload,
+                    toogle: true
                 };
             }
         }
+            
+            
         case GET_ADDRESS_PREDICTIONS:
             return { ...state, 
                     predictions: action.payload,
             };
-        case GET_SELECTED_ADDRESS: {
-            console.log(state.resultTypes.pickUp);
-            if (state.resultTypes.pickUp) {
-                return { ...state,
-                        resultTypes: { pickUp: false, dropOff: false }, 
-                        pickUp: action.payload.name,
-                        region: {
-                            latitude: action.payload.latitude,
-                            longitude: action.payload.longitude,
-                            latitudeDelta: LATITUDEDELTA,
-                            longitudeDelta: LONGTITUDEDELTA
-                        },
-                        pickUpRegion: state.region,
-                        currentLocation: { pickUp: !state.currentLocation.pickUp, dropOff: state.currentLocation.dropOff },
-                      
-                        // arrayMarker:[...state.arrayMarker,pickUpRegion]
-                };
-            } else {
-                return { ...state,
-                    dropOff: action.payload.name,
-                    resultTypes: { pickUp: false, dropOff: false }, 
-                    nextRegion: {
-                        latitude: action.payload.latitude,
-                        longitude: action.payload.longitude,
-                        latitudeDelta: LATITUDEDELTA,
-                        longitudeDelta: LONGTITUDEDELTA
-                    },
-                    currentLocation: { pickUp: state.currentLocation.pickUp, 
-                                    dropOff: !state.currentLocation.dropOff },
-                    // arrayMarker:[...state.arrayMarker,nextRegion]
-                };
-            }
-        }
-        case DELETE_RESULT_ADDRESS: {
-            console.log(state.pickUpRegion);
-            if (action.payload === 'pickUp') {
-                return { ...state, 
-                        pickUp: '',
-                        resultTypes: { pickUp: false, dropOff: false }, 
-                        deleted: true,
-                        region: state.pickUpRegion,
-                };
-            } else {
-                return { ...state, 
-                    dropOff: '',
-                    resultTypes: { pickUp: false, dropOff: false }, 
-                    deleted: true,
-                    nextRegion: {
-                        latitude: null,
-                        longitude: null,
-                        latitudeDelta: null,
-                        longitudeDelta: null
-                    },
-                    packageDetail: [],
-                };
-            }
-        }
+        case GET_SELECTED_ADDRESS: 
+            return { ...state,
+                dropOff: action.payload.name,
+                toogle: false,
+                finalDestination: {
+                    latitude: action.payload.latitude,
+                    longitude: action.payload.longitude
+                },
+            };
+            
+        case DELETE_RESULT_ADDRESS: 
+            return { ...state, 
+                dropOff: '',
+                toogle: false,
+                finalDestination: {
+                    latitude: null,
+                    longitude: null
+                }
+            };
+            
         case GET_PACKAGE_LIST_SUCCESS:
             console.log(action.payload);
             return { ...state,
                     packageList: action.payload,
             };
+        case GET_SAME_LOCATION_PACKAGE_LIST_SUCCESS:
+            return { ...state,
+                    sameLocationPackageList: action.payload,
+            };
+        case GET_ONE_LOCATION_PACKAGE_LIST: 
+            return { ...state,
+                    oneLocationPackageList: action.payload
+            };
+        case GET_DIFFERENT_LOCATION_PACKAGE_LIST_SUCCESS:
+            return { ...state,
+                differentLocationPackageList: action.payload,
+            };
+        
         case GET_CHOSEN_PACKAGE_LIST_SUCCESS:
             return { ...state,
                     chosenPackageList: action.payload,
+            };
+        case GET_ONE_LOCATION_PICKED_PACKAGE_LIST: 
+            return { ...state,
+                    oneLocationPickedPackageList: action.payload
             };
         case GET_PACKAGE_DETAIL:
         console.log(action.payload);
@@ -179,6 +148,15 @@ export default (state = INITIAL_STATE, action) => {
         case DELETE_DATA: 
             return { ...state,
                     loading: false
+            };
+        case HAVE_FINAL_DESTINATION:
+            return { ...state,
+                isExisted: !state.isExisted,
+                dropOff: '',
+                finalDestination: {
+                    latitude: null,
+                    longitude: null
+                }
             };
         case CHANGE_REGION:
             console.log(action.payload);
@@ -212,9 +190,20 @@ export default (state = INITIAL_STATE, action) => {
                 pickedPackageDestinationList: action.payload
             };
         case FIND_SHORTEST_ROUTE:
-            console.log(action.payload);
             return { ...state,
                 route: action.payload
+            };
+        case GET_ALL_PICKED_PACKAGE_LIST:
+            return { ...state,
+                allPackageList: action.payload
+            };
+        case GET__LIST_HAVING_MULTI_CHOSEN_PACKAGE_AT_ONE_LOCATION:
+            return { ...state,
+                multiPackageAtOneLocationList: action.payload
+            };
+        
+        case REFRESH_DATA: 
+            return { ...INITIAL_STATE 
             };
         default:
             return state;

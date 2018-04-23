@@ -17,9 +17,7 @@ class ReceivingPackageVerification extends Component {
     }
     onDismiss = () => {
         this.props.disableModal();
-        if (this.props.navigation.state.params.status === 'send_to_rc') {
-            this.props.navigation.state.params.updateDirectionButton();
-        }
+        this.props.navigation.state.params.updateDirectionButton();
         this.props.navigation.goBack(null);
         // this.props.navigation.navigate('Home');
     }
@@ -54,7 +52,7 @@ class ReceivingPackageVerification extends Component {
                                 onFulfill={(isvalid, code) => this.onCheckCode(code)}
                         />
                     </View>
-                    <Button full transparent onPress={() => this.props.navigation.navigate('CameraScreen')}><Text>Scan QR code</Text></Button>
+                    {/* <Button full transparent onPress={() => this.props.navigation.navigate('CameraScreen')}><Text>Scan QR code</Text></Button> */}
                     <Modal isVisible={this.props.loading}>
                             <Spinner />
                     </Modal>

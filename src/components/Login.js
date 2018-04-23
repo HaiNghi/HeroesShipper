@@ -42,7 +42,7 @@ class Login extends Component {
     }
     render() {
         return (
-            <Container>
+            <Container style={{ flexWrap: 'wrap' }}>
                 <Image 
                     source={require('./image/background2.png')} 
                     style={{    
@@ -102,7 +102,7 @@ class Login extends Component {
                             >
                                 <Text style={{ color: 'black' }}>SIGN UP </Text>
                             </Button>
-                            <Button full transparent>
+                            <Button full transparent style={{ marginTop: 10 }}>
                                 <Text style={{ color: '#fff' }}>Forgot your password</Text>
                             </Button>
                             </View>

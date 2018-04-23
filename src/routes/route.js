@@ -1,12 +1,13 @@
 import React from 'react';
 import { StackNavigator, DrawerNavigator } from 'react-navigation';
 import { Root } from 'native-base';
-import SlideMenu from '../components/SlideMenu';
+import SlideMenu from '../containers/SlideMenu';
 import Home from '../containers/Home';
 import Login from '../containers/Login';
 import Register from '../containers/Register';
 import AccountVerification from '../containers/AccountVerification';
 import DeliveryDetail from '../containers/DeliveryDetail';
+import Histories from '../containers/Histories';
 import DefaultRoute from '../containers/DefaultRoute';
 import ReceivingPackageVerification from '../containers/ReceivingPackageVerification';
 import CameraScreen from '../components/CameraScreen';
@@ -15,16 +16,20 @@ const MainNavigator = DrawerNavigator({
     Home: { 
         screen: Home
     },
-    DefaultRoute: {
-        screen: DefaultRoute
+    // DefaultRoute: {
+    //     screen: DefaultRoute
+    // },
+    Histories: {
+        screen: Histories
     }
 }, 
 {
     contentComponent: props => <SlideMenu {...props} />,
     headerMode: 'none',
+    initialRouterName: 'Home',
     navigationOptions: {
         drawerLockMode: 'locked-closed'
-      }   
+      } 
 });
 
 const AppNavigator = StackNavigator({
@@ -36,7 +41,6 @@ const AppNavigator = StackNavigator({
     },
     MainNavigator: { 
         screen: MainNavigator,
-       
     },
     AccountVerification: {
         screen: AccountVerification

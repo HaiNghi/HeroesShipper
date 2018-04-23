@@ -1,81 +1,63 @@
-import React from 'react';
-import { Text, Keyboard } from 'react-native';
-import { View, InputGroup, Input, Icon, Button } from 'native-base';
+import React, { Component } from 'react';
+import { Text, Keyboard, Alert } from 'react-native';
+import { View, InputGroup, Input, Icon, Button, CheckBox } from 'native-base';
 import styles from './SearchBoxStyles';
 
-const SearchBox = ({ 
-                            toogleSearchResult, 
-                            getAddressPredictions, 
-                            region,
-                            getPickUp,
-                            getDropOff,
-                            pickUp,
-                            dropOff,
-                            deleteResultAddress,
-                            showDropOff
-                        }) => {
-    function handleGetPickUp(text) {
-        getPickUp(text);
-        getAddressPredictions(text, { region });
+class SearchBox extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { check: false, disabled: true };
     }
 
-    function handleGetDropOff(text) {
-        getDropOff(text);
-        getAddressPredictions(text, { region });
+    componentWillReceiveProps(nextProps) {
+        (nextProps.isExisted) ? this.setState({ disabled: false }) : this.setState({ disabled: true });
     }
-
-    function deleteAddress(text) {
-        // alert("OK");
-        deleteResultAddress(text);
+    
+    onCheck = () => {
+        this.props.haveFinalDestination();
+    }
+    handleGetDropOff = (text) => {
+        const { region } = this.props;
+        this.props.getDropOff(text);
+        this.props.getAddressPredictions(text, { region });
+    }
+    deleteAddress = (text) => {
+        this.props.deleteResultAddress(text);
         Keyboard.dismiss();
     }
 
-    return (
-        <View style={styles.searchBox}>
-            <View style={styles.inputWrapper}>
-                <Text style={styles.label}>PICK UP</Text>
-                <InputGroup>
-                    <Button transparent>
-                        <Icon name="search" size={15} color="#ff5e3a" />
-                    </Button>
-                    
-                    <Input 
-                        onFocus={() => toogleSearchResult('pickUp')} style={styles.inputSearch} placeholder="Choose pick-up location" 
-                        onChangeText={
-                            handleGetPickUp.bind(this)
-                    }
-                        value={pickUp}
-                    />
-                    <Button transparent onPress={deleteAddress.bind(this, 'pickUp')} accessible={false}>
-                        <Icon name="md-close" size={15} color="#ff5e3a" />
-                    </Button>
-                </InputGroup>
-            </View>
-            {
-                (showDropOff) &&
-                <View style={styles.secondInputWrapper}>
-                    <Text style={styles.label}>DROP OFF</Text>
+    render() {
+        return (
+            <View style={styles.searchBox}>
+                <View style={styles.inputWrapper}>
+                    <Text style={styles.label}>FINAL DESTINATION</Text>
                     <InputGroup>
-                        <Button transparent>
+                        {/* <Button transparent>
                             <Icon name="search" size={15} color="#ff5e3a" />  
-                        </Button>
-
+                        </Button> */}
+                        <CheckBox style={{ marginRight: 20 }} checked={this.props.isExisted} onPress={() => this.onCheck()} />
+    
                         <Input 
-                            onFocus={() => toogleSearchResult('dropOff')} style={styles.inputSearch} placeholder="Choose drop-off location" 
+                            disabled={this.state.disabled}
+                            style={styles.inputSearch} placeholder="Choose destination location" 
                             onChangeText={
-                                handleGetDropOff.bind(this)
+                                (text) => this.handleGetDropOff(text)
                             }
-                            value={dropOff}
+                            value={this.props.dropOff}
                         />
-                        <Button transparent onPress={deleteAddress.bind(this, 'dropOff')} accessible={false}>
-                            <Icon name="md-close" size={15} color="#ff5e3a" />
-                        </Button>
+                        {
+                            (this.props.dropOff !== '' && this.props.isExisted) &&
+                            <Button transparent onPress={() => this.deleteAddress('dropOff')} accessible={false}>
+                                <Icon name="md-close" size={15} color="#ff5e3a" />
+                            </Button>
+                        }
+                        
                     </InputGroup>
                 </View>
-            }
-            
-        </View>
-    );
-};
+                
+            </View>
+        );
+    }
+}
 
 export default SearchBox;
