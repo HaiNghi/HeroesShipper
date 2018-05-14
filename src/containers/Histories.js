@@ -1,16 +1,12 @@
 import { connect } from 'react-redux';
 
 import Histories from '../components/Histories';
-import {
-    // loading,
-    getHistoryList,
-    getOutCome
-} from '../actions';
-import { processGettingHistoryList, processGetOutCome } from '../api/api';
+import * as Actions from '../actions';
+import * as API from '../api/api';
 
 const mapStateToProps = (state) => ({
     historyList: state.package.historyList,
-    outCome: state.package.outCome
+    outCome: state.package.outCome || {}
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -18,10 +14,10 @@ const mapDispatchToProps = (dispatch) => ({
     //     dispatch(loading());
     // },
     getHistoryList: () => {
-       processGettingHistoryList(dispatch, getHistoryList);
+        API.processGettingHistoryList(dispatch, Actions.getHistoryList);
     },
     getOutCome: () => {
-        processGetOutCome(dispatch, getOutCome);
+        API.processGetOutCome(dispatch, Actions.getOutCome);
     }
 });
 

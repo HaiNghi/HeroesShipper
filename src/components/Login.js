@@ -9,7 +9,6 @@ import { Spinner } from './common';
 class Login extends Component {
     componentWillReceiveProps(nextProps) {
         if (nextProps.success !== this.props.success) {
-            Keyboard.dismiss();
             this.props.navigation.navigate('Home');
         }
     }
@@ -38,6 +37,7 @@ class Login extends Component {
             // this.setState({ loading: true });
             this.props.loadSpinner();
             this.props.login(email, password);
+            Keyboard.dismiss();
         }
     }
     render() {
@@ -72,6 +72,9 @@ class Login extends Component {
                                     <Input 
                                         placeholder='Email' 
                                         onChangeText={(text) => this.props.inputEmail(text)}
+                                        returnKeyType='next'
+                                        keyboardType='email-address'
+                                        onSubmitEditing={(event) => { this.refs.passwordRef._root.focus(); }}
                                         value={this.props.email}
                                     />
                                 </Item>
@@ -80,8 +83,10 @@ class Login extends Component {
                             <Body style={LoginFormStyle.secondInputStyle}>
                                 <Item rounded style={LoginFormStyle.inputBackGroundStyle}>
                                     <Input 
+                                        ref="passwordRef" 
                                         secureTextEntry
-                                        placeholder='Password' 
+                                        placeholder='Password'
+                                        returnKeyType='done' 
                                         onChangeText={(text) => this.props.inputPassword(text)}
                                         value={this.props.password}
                                     />

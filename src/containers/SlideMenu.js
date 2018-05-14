@@ -1,12 +1,8 @@
 import { connect } from 'react-redux';
 
 import SlideMenu from '../components/SlideMenu';
-import {
-    logOut,
-    loadSpinner,
-    refreshData
-} from '../actions';
-import { processLogOut } from '../api/api';
+import * as Actions from '../actions';
+import * as API from '../api/api';
 
 const mapStateToProps = (state) => ({
     loading: state.auth.loading,
@@ -15,13 +11,13 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
     logOut: () => {
-        processLogOut(dispatch, logOut);
+        API.processLogOut(dispatch, Actions.logOut);
     },
     loadingSpinner: () => {
-        dispatch(loadSpinner());
+        dispatch(Actions.loadSpinner());
     },
     refreshData: () => {
-        dispatch(refreshData());
+        dispatch(Actions.refreshData());
     }
 });
 

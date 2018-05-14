@@ -14,12 +14,15 @@ export const processLogin = (dispatch, loginSuccess, loginFail, loadSpinner, ema
                 console.log(response);
                 switch (response.data.data.role_id) {
                         case 2: {
-                                AsyncStorage.setItem('user_info', JSON.stringify(response.data.data));
-                                AsyncStorage.setItem('is_online', `${response.data.data.is_online}`);
-                                AsyncStorage.getItem('user_info', (error, result) => {
-                                        user = JSON.parse(result);
+                                AsyncStorage.setItem('user_info', JSON.stringify(response.data.data))
+                                .then(() => {
+                                        AsyncStorage.setItem('is_online', `${response.data.data.is_online}`);
+                                        AsyncStorage.getItem('user_info', (error, result) => {
+                                                user = JSON.parse(result);
+                                        }).then(() => {
+                                                dispatch(loginSuccess());
+                                        });
                                 });
-                                dispatch(loginSuccess());
                                 break;
                         }
                         default: {
@@ -85,8 +88,8 @@ export const processVerifyCodeForDeliveringSuccess = (dispatch, verifyCodeForDel
         }).then((response) => {
                 dispatch(verifyCodeForDeliveringPackage(response.data.message));
         }).catch((error) => {
+                console.log(error.response.data.message);
                 dispatch(verifyCodeForReceivingPackageFailed(error.response.data.message));
-                console.log(error.response);
         });
 };
 
@@ -167,7 +170,8 @@ export const processGetOutCome = (dispatch, getOutCome) => {
                 headers: { Authorization: `Bearer ${user.token}` } 
         })
         .then((response) => {
-                dispatch(getOutCome(response.data.data.daily.total));
+                console.log(response.data.data);
+                dispatch(getOutCome(response.data.data));
         })
         .catch((error) => {
                 Alert.alert(error.message);

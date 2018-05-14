@@ -111,7 +111,13 @@ export const styles = StyleSheet.create({
         flex: 1, 
         flexDirection: 'column', 
         alignItems: 'center' 
-    }
+    },
+    labelStyle: { 
+        color: '#ff5e3a', 
+        marginLeft: 10, 
+        fontWeight: 'bold',
+        margin: 5 
+    },
 });
 export const AccountValidation = StyleSheet.create({
     viewDirection: {
@@ -189,10 +195,8 @@ export const HistoryStyle = StyleSheet.create(
         },
         title: { 
             fontSize: 16, 
-            textAlign: 
-            'center', 
-            fontWeight: 
-            'bold', 
+            textAlign: 'center', 
+            fontWeight: 'bold', 
             marginBottom: 20
         }
     }

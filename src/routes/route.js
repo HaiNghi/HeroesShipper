@@ -12,6 +12,7 @@ import DefaultRoute from '../containers/DefaultRoute';
 import ReceivingPackageVerification from '../containers/ReceivingPackageVerification';
 import CameraScreen from '../components/CameraScreen';
 
+
 const MainNavigator = DrawerNavigator({
     Home: { 
         screen: Home
@@ -19,9 +20,7 @@ const MainNavigator = DrawerNavigator({
     // DefaultRoute: {
     //     screen: DefaultRoute
     // },
-    Histories: {
-        screen: Histories
-    }
+    
 }, 
 {
     contentComponent: props => <SlideMenu {...props} />,
@@ -41,6 +40,9 @@ const AppNavigator = StackNavigator({
     },
     MainNavigator: { 
         screen: MainNavigator,
+    },
+    Histories: {
+        screen: Histories
     },
     AccountVerification: {
         screen: AccountVerification

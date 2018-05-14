@@ -1,16 +1,8 @@
 import { connect } from 'react-redux';
 
 import ReceivingPackageVerification from '../components/ReceivingPackageVerification';
-import {
-    verifyCodeForReceivingPackage,
-    verifyCodeForReceivingPackageFailed,
-    waitForCheck,
-    disableModal,
-    verifyCodeForDeliveringSuccess
-} from '../actions';
-import { processVerificationForReceivingPackage, 
-        processVerifyCodeForDeliveringSuccess
-} from '../api/api';
+import * as Actions from '../actions';
+import * as API from '../api/api';
 
 const mapStateToProps = (state) => ({
    success: state.package.success,
@@ -21,17 +13,22 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
     verifyCodeForReceivingPackage: (verifyCode, packageId) => {
-        processVerificationForReceivingPackage(dispatch, verifyCodeForReceivingPackage, verifyCodeForReceivingPackageFailed, verifyCode, packageId);
+        API.processVerificationForReceivingPackage(dispatch, Actions.verifyCodeForReceivingPackage, 
+            Actions.verifyCodeForReceivingPackageFailed, verifyCode, packageId);
     },
     waitForCheck: () => {
-        dispatch(waitForCheck());
+        dispatch(Actions.waitForCheck());
     },
     disableModal: () => {
-        dispatch(disableModal());
+        dispatch(Actions.disableModal());
     },
     verifyCodeForDeliveringSuccess: (verifyCode, packageId) => {
-        processVerifyCodeForDeliveringSuccess(dispatch, verifyCodeForDeliveringSuccess, verifyCodeForReceivingPackageFailed, verifyCode, packageId);
-    }
+        API.processVerifyCodeForDeliveringSuccess(dispatch, Actions.verifyCodeForDeliveringSuccess, 
+            Actions.verifyCodeForReceivingPackageFailed, verifyCode, packageId);
+    },
+    deleteData: () => {
+        dispatch(Actions.deleteData());
+    },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ReceivingPackageVerification);

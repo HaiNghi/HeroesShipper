@@ -34,10 +34,11 @@ const styles = {
     mapCallOut: { 
         flexWrap: 'wrap', 
         width: 150, 
-        height: 100, 
+        // height: 130, 
         borderRadius: 7, 
         padding: 5,
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
+        flexDirection: 'column'
     },
     labelStyle: { 
         fontWeight: 'bold', 
@@ -55,16 +56,15 @@ const styles = {
         paddingLeft: 20, 
         paddingRight: 20 
     },
-    //button show package list
+    //button for showing package list
     buttonWrapper: { 
         bottom: 10,
         position: 'absolute',
         flexDirection: 'row',
-        // alignSelf: 'flex-end',
         justifyContent: 'space-between',
         alignSelf: 'center',
-        // marginRight: 20,
         marginLeft: 10,
+       
    },
    buttonModal: { 
         width: 20, 
@@ -119,14 +119,19 @@ const styles = {
         fontSize: 16
     },
     numberViewContainer: {
-        width: 20, 
+        width: 22, 
         height: 20, 
-        borderRadius: 5, 
-        backgroundColor: '#fff', 
-        alignItems: 'center' 
+        borderRadius: 8, 
+        flexWrap: 'wrap',
+        backgroundColor: '#5cb85c', 
+        alignItems: 'center',
+        // shadowOpacity: 0.7, 
+        // shadowRadius: 5,
+        borderWidth: 0.85,
+        borderColor: '#fff'
     },
     numberText: {
-        color: '#000', 
+        color: '#fff', 
         fontWeight: 'bold'
     }
 

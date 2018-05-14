@@ -1,33 +1,8 @@
 import { connect } from 'react-redux';
 
 import Home from '../components/Home';
-import {
-    getCurrentLocation, 
-    getAddressPredictions,
-    getSelectedAddress,
-    deleteResultAddress,
-    getPackageList,
-    getSameLocationPackageList,
-    getOneLocationPackageList,
-    getPackageDetail,
-    getChosenPackageList,
-    changeRegion,
-    getPickedPackageList,
-    getDeliveringPackageList,
-    getPickedPackageDestinationList,
-    findShortestRoute,
-    deleteData,
-    isOnline,
-    getOneLocationPickedPackageList,
-    getAllPickedPackageList,
-    getDropOff,
-    haveFinalDestination
-} from '../actions';
-import { doGetPackageDetail, 
-        processUpdatingCurrentPositon, 
-        processFindingShortestRoute,
-        processIsOnline
-} from '../api/api';
+import * as Actions from '../actions';
+import * as API from '../api/api';
 
 const mapStateToProps = (state) => ({
     region: state.map.region,
@@ -55,67 +30,67 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
     getCurrentLocation: () => {
-        dispatch(getCurrentLocation());
+        dispatch(Actions.getCurrentLocation());
     },
     getAddressPredictions: (text, { region }) => {
-        dispatch(getAddressPredictions(text, { region }));
+        dispatch(Actions.getAddressPredictions(text, { region }));
     },
     getSelectedAddress: (placeID) => {
-        dispatch(getSelectedAddress(placeID));
+        dispatch(Actions.getSelectedAddress(placeID));
     },
     deleteResultAddress: (text) => {
-        dispatch(deleteResultAddress(text));
+        dispatch(Actions.deleteResultAddress(text));
     },
     getPackageList: (userId) => {
-        dispatch(getPackageList(userId));
+        dispatch(Actions.getPackageList(userId));
     },
     getSameLocationPackageList: () => {
-        dispatch(getSameLocationPackageList());
+        dispatch(Actions.getSameLocationPackageList());
     },
     getOneLocationPackageList: (item) => {
-        dispatch(getOneLocationPackageList(item));
+        dispatch(Actions.getOneLocationPackageList(item));
     },
     getChosenPackageList: (userId) => {
-        dispatch(getChosenPackageList(userId));
+        dispatch(Actions.getChosenPackageList(userId));
     },
     getPackageDetail: (index) => {
-        doGetPackageDetail(dispatch, getPackageDetail, index);
+        API.doGetPackageDetail(dispatch, Actions.getPackageDetail, index);
     },
     changeRegion: (region, type) => {
-        dispatch(changeRegion(region, type));
+        dispatch(Actions.changeRegion(region, type));
     },
     getDropOff: (text) => {
-        dispatch(getDropOff(text));
+        dispatch(Actions.getDropOff(text));
     },
     getPickedPackageList: (userId) => {
-        dispatch(getPickedPackageList(userId));
+        dispatch(Actions.getPickedPackageList(userId));
     },
     getDeliveringPackageList: (userId) => {
-        dispatch(getDeliveringPackageList(userId));
+        dispatch(Actions.getDeliveringPackageList(userId));
     },
     getPickedPackageDestinationList: (userId) => {
-        dispatch(getPickedPackageDestinationList(userId));
+        dispatch(Actions.getPickedPackageDestinationList(userId));
     },
     getOneLocationPickedPackageList: (userId, item) => {
-        dispatch(getOneLocationPickedPackageList(userId, item));
+        dispatch(Actions.getOneLocationPickedPackageList(userId, item));
     },
     updateCurrentLocation: (shipperId, latitude, longitude) => {
-        processUpdatingCurrentPositon(shipperId, latitude, longitude);
+        API.processUpdatingCurrentPositon(shipperId, latitude, longitude);
     },
     findShortestRoute: (latitude, longitude) => {
-        processFindingShortestRoute(dispatch, findShortestRoute, latitude, longitude);
+        API.processFindingShortestRoute(dispatch, Actions.findShortestRoute, latitude, longitude);
     },
     deleteData: () => {
-        dispatch(deleteData());
+        dispatch(Actions.deleteData());
     },
     isOnline: () => {
-        processIsOnline(dispatch, isOnline);
+        API.processIsOnline(dispatch, Actions.isOnline);
     },
     getAllPickedPackageList: (userId) => {
-        dispatch(getAllPickedPackageList(userId));
+        dispatch(Actions.getAllPickedPackageList(userId));
     },
     haveFinalDestination: () => {
-        dispatch(haveFinalDestination());
+        dispatch(Actions.haveFinalDestination());
     }
 });
 

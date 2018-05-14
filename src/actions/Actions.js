@@ -1,51 +1,5 @@
 import RNGooglePlaces from 'react-native-google-places';
 import firebase from 'firebase';
-import { 
-    GET_CURRENT_LOCATION, 
-    GET_INPUT, 
-    TOOGLE_SEARCH_RESULT,
-    GET_ADDRESS_PREDICTIONS,
-    GET_SELECTED_ADDRESS,
-    GET_PICK_UP,
-    GET_DROP_OFF,
-    DELETE_RESULT_ADDRESS,
-    GET_PACKAGE_LIST_SUCCESS,
-    GET_SAME_LOCATION_PACKAGE_LIST_SUCCESS,
-    GET_ONE_LOCATION_PACKAGE_LIST,
-    GET_DIFFERENT_LOCATION_PACKAGE_LIST_SUCCESS,
-    GET_PACKAGE_DETAIL,
-    DELETE_DATA,
-    CHOOSE_PACKAGE,
-    GET_CHOSEN_PACKAGE_LIST_SUCCESS,
-    CHANGE_REGION,
-    INPUT_EMAIL,
-    INPUT_PASSWORD,
-    LOGIN_SUCCESS,
-    LOGIN_FAIL,
-    LOADING,
-    DISABLE_MODAL,
-    VERIFY_RECEIVING_PACKAGE,
-    VERIFY_RECEIVING_PACKAGE_FAILED,
-    LOAD_SPINNER,
-    GET_PICKED_PACKAGE_LIST,
-    GET_ONE_LOCATION_PICKED_PACKAGE_LIST,
-    GET_DELIVERING_PACKAGE_LIST,
-    GET_PICKED_PACKAGE_DESTINATION_LIST,
-    VERIFY_DELIVERING_SUCCESS,
-    CHANGE_REGION_1,
-    FIND_SHORTEST_ROUTE,
-    LOG_OUT,
-    REFRESH_DATA,
-    IS_ONLINE,
-    IS_ONLINE_ERROR,
-    GET_HISTORY_LIST,
-    GET_OUT_COME,
-    GET_ALL_PICKED_PACKAGE_LIST,
-    GET__LIST_HAVING_MULTI_CHOSEN_PACKAGE_AT_ONE_LOCATION,
-    CHOOSE_PACKAGE_ERROR,
-
-} from './types';
-
 import * as Types from './types';
 
 export const getCurrentLocation = () => {
@@ -53,7 +7,7 @@ export const getCurrentLocation = () => {
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 dispatch({
-                    type: GET_CURRENT_LOCATION,
+                    type: Types.GET_CURRENT_LOCATION,
                     payload: position
                 });
             },
@@ -67,28 +21,21 @@ export const getCurrentLocation = () => {
 
 export const getInputData = (text) => {
     return {
-        type: GET_INPUT,
-        payload: text
-    };
-};
-
-export const getPickUp = (text) => {
-    return {
-        type: GET_PICK_UP,
+        type: Types.GET_INPUT,
         payload: text
     };
 };
 
 export const getDropOff = (text) => {
     return {
-        type: GET_DROP_OFF,
+        type: Types.GET_DROP_OFF,
         payload: text
     };
 };
 
 export const toogleSearchResult = (text) => {
     return {
-        type: TOOGLE_SEARCH_RESULT,
+        type: Types.TOOGLE_SEARCH_RESULT,
         payload: text
     };
 };
@@ -105,7 +52,7 @@ export const getAddressPredictions = (text, { region }) => {
                 radius: 0.01
             }
         ).then((results) => dispatch({
-            type: GET_ADDRESS_PREDICTIONS,
+            type: Types.GET_ADDRESS_PREDICTIONS,
             payload: results
         }))
         .catch((error) => console.log(error.message));
@@ -117,7 +64,7 @@ export const getSelectedAddress = (address) => {
         RNGooglePlaces.lookUpPlaceByID(address)
         .then((results) => {
             dispatch({
-                type: GET_SELECTED_ADDRESS,
+                type: Types.GET_SELECTED_ADDRESS,
                 payload: results
             });
         })
@@ -129,7 +76,7 @@ export const getSelectedAddress = (address) => {
 
 export const deleteResultAddress = (text) => {
     return {
-        type: DELETE_RESULT_ADDRESS,
+        type: Types.DELETE_RESULT_ADDRESS,
         payload: text
     };
 };
@@ -139,44 +86,6 @@ export const haveFinalDestination = () => {
         type: Types.HAVE_FINAL_DESTINATION
     };
 };
-
-// export const getPackageList = (type) => {
-//     return (dispatch) => {
-//         let sameLocation = [];
-//         let differentLocation = [];
-//         let arr = [];
-//         let list = [];
-//         firebase.database().ref('request-ship/')
-//             .on('value', snapshot => {
-//                 if (snapshot.val() !== null) {
-//                     arr = Object.entries(snapshot.val()).map(e => Object.assign(e[1], { key: e[0] }));
-//                     switch (type) {
-//                         case 'sameLocation': { 
-//                             sameLocation = onCheckSameLocationPackage(arr);
-//                             differentLocation = onCheckDifferentLocationPackage(arr, sameLocation);
-//                             list = onCheckSameLocationMultiPackageAndPickedUpPackage('1', differentLocation, sameLocation); 
-//                             break; 
-//                         }
-//                         case 'differentLocation': { 
-//                             sameLocation = onCheckSameLocationPackage(arr);
-//                             differentLocation = onCheckDifferentLocationPackage(arr, sameLocation); 
-//                             differentLocation = onCheckDifferentLocationPackageButNoPickedUpPackage('1', differentLocation);
-//                             break; 
-//                         }
-                        
-//                         default:
-//                     }
-//                 } else {
-//                     arr = [];
-//                 }
-//                 switch (type) {
-//                     case 'sameLocation': { dispatch({ type: GET_SAME_LOCATION_PACKAGE_LIST_SUCCESS, payload: sameLocation }); break; }
-//                     case 'differentLocation': { dispatch({ type: GET_DIFFERENT_LOCATION_PACKAGE_LIST_SUCCESS, payload: differentLocation }); break; }
-//                     default: dispatch({ type: GET_PACKAGE_LIST_SUCCESS, payload: arr });
-//                 }   
-//         });
-//     };
-// };
 
 export const getPackageList = (userId) => {
     return (dispatch) => {
@@ -197,29 +106,26 @@ export const getPackageList = (userId) => {
                     differentLocationHavingNoPickedPackage = onCheckNoPickedUpPackage(userId, differentLocation);
                 } else {
                     arr = [];
+                    sameLocationHavingNoPickedPackage = [];
+                    differentLocationHavingNoPickedPackage = [];
                 }
-                dispatch({ type: GET_SAME_LOCATION_PACKAGE_LIST_SUCCESS, payload: sameLocationHavingNoPickedPackage }); 
-                dispatch({ type: GET_DIFFERENT_LOCATION_PACKAGE_LIST_SUCCESS, payload: differentLocationHavingNoPickedPackage }); 
-                dispatch({ type: GET_PACKAGE_LIST_SUCCESS, payload: arr });
+                dispatch({ type: Types.GET_SAME_LOCATION_PACKAGE_LIST_SUCCESS, payload: sameLocationHavingNoPickedPackage }); 
+                dispatch({ type: Types.GET_DIFFERENT_LOCATION_PACKAGE_LIST_SUCCESS, payload: differentLocationHavingNoPickedPackage }); 
+                dispatch({ type: Types.GET_PACKAGE_LIST_SUCCESS, payload: arr });
+            });
+        firebase.database().ref(`shipper/${userId}/request-ship`).orderByChild('status')
+            .on('child_removed', sn => {
+                sameLocation = onCheckSameLocationPackage(arr);
+                differentLocation = onCheckDifferentLocationPackage(arr, sameLocation);
+                tmp = onCheckSameLocationPackage(arr);
+                sameLocationHavingNoPickedPackage = onCheckNoPickedUpPackage(userId, tmp);  
+                differentLocationHavingNoPickedPackage = onCheckNoPickedUpPackage(userId, differentLocation);
+                dispatch({ type: Types.GET_SAME_LOCATION_PACKAGE_LIST_SUCCESS, payload: sameLocationHavingNoPickedPackage }); 
+                dispatch({ type: Types.GET_DIFFERENT_LOCATION_PACKAGE_LIST_SUCCESS, payload: differentLocationHavingNoPickedPackage }); 
+                dispatch({ type: Types.GET_PACKAGE_LIST_SUCCESS, payload: arr });
             });
         };
 };
-
-// export const getSameLocationPackageList = () => {
-//     return (dispatch) => {
-//         let arr = [];
-//         firebase.database().ref('request-ship/')
-//             .on('value', snapshot => {
-//                 if (snapshot.val() !== null) {
-//                     arr = Object.entries(snapshot.val()).map(e => Object.assign(e[1], { key: e[0] }));
-//                     onCheckSameLocationPackage(arr);
-//                 } else {
-//                     arr = [];
-//                 }
-//                 dispatch({ type: GET_SAME_LOCATION_PACKAGE_LIST_SUCCESS, payload: arr });
-//         });
-//     };
-// };
 
 export const getOneLocationPackageList = (item) => {
     return (dispatch) => {
@@ -232,7 +138,7 @@ export const getOneLocationPackageList = (item) => {
                 } else {
                     arr = [];
                 }
-                dispatch({ type: GET_ONE_LOCATION_PACKAGE_LIST, payload: arr });
+                dispatch({ type: Types.GET_ONE_LOCATION_PACKAGE_LIST, payload: arr });
         });
     };
 };
@@ -255,7 +161,9 @@ export const getChosenPackageList = (userId) => {
                 sameLocationPackageList = onCheckSameLocationPackage(arr2);
                 tmp = onCheckDifferentLocationPackage(arr2, sameLocationPackageList);
             } else {
+                arr2 = [];
                 sameLocationPackageList = [];
+                tmp = [];
             }
             
             firebase.database().ref(`shipper/${userId}/request-ship`).orderByChild('status')
@@ -275,9 +183,11 @@ export const getChosenPackageList = (userId) => {
                     }
                 } else {
                     arr = [];
+                    samePackageInDifferentPart = [];
+                    list = [];
                 }
-                dispatch({ type: GET__LIST_HAVING_MULTI_CHOSEN_PACKAGE_AT_ONE_LOCATION, payload: samePackageInDifferentPart });
-                dispatch({ type: GET_CHOSEN_PACKAGE_LIST_SUCCESS, payload: list });
+                dispatch({ type: Types.GET__LIST_HAVING_MULTI_CHOSEN_PACKAGE_AT_ONE_LOCATION, payload: samePackageInDifferentPart });
+                dispatch({ type: Types.GET_CHOSEN_PACKAGE_LIST_SUCCESS, payload: list });
             });
         });
     };
@@ -287,10 +197,11 @@ export const getOneLocationPickedPackageList = (userId, item) => {
     return (dispatch) => {
         let arr = [];
         let i = 0;
-        const list = [];
+        let list = [];
         firebase.database().ref(`shipper/${userId}/request-ship`).orderByChild('status')
             .on('value', snapshot => {
                 if (snapshot.val() !== null) {
+                    list = [];
                     arr = Object.entries(snapshot.val()).map(e => Object.assign(e[1], { key: e[0] }));
                     for (i = 0; i < arr.length; i++) {
                         if (item.pickup_latitude === arr[i].pickup_latitude && item.pickup_longitude === arr[i].pickup_longitude && arr[i].status < 4) {
@@ -300,7 +211,7 @@ export const getOneLocationPickedPackageList = (userId, item) => {
                 } else {
                     arr = [];
                 }
-                dispatch({ type: GET_ONE_LOCATION_PICKED_PACKAGE_LIST, payload: list });
+                dispatch({ type: Types.GET_ONE_LOCATION_PICKED_PACKAGE_LIST, payload: list });
         });
     };
 };
@@ -315,21 +226,21 @@ export const getPickedPackageDestinationList = (userId) => {
                 } else {
                     arr = [];
                 }
-                dispatch({ type: GET_PICKED_PACKAGE_DESTINATION_LIST, payload: arr });
+                dispatch({ type: Types.GET_PICKED_PACKAGE_DESTINATION_LIST, payload: arr });
         });
     };
 };
 
 export const getPackageDetail = (packageDetail) => {
     return {
-        type: GET_PACKAGE_DETAIL,
+        type: Types.GET_PACKAGE_DETAIL,
         payload: packageDetail
     };
 };
 
 export const deleteData = () => {
     return {
-        type: DELETE_DATA,
+        type: Types.DELETE_DATA,
     };
 };
 
@@ -337,7 +248,7 @@ export const choosePackage = (coordinates) => {
     return (dispatch) => {
         dispatch(waitForCheck());
         setTimeout(() => dispatch({
-            type: CHOOSE_PACKAGE,
+            type: Types.CHOOSE_PACKAGE,
             payload: coordinates
         }), 500);
     };
@@ -347,7 +258,7 @@ export const choosePackageError = () => {
     return (dispatch) => {
         dispatch(waitForCheck());
         setTimeout(() => dispatch({
-            type: CHOOSE_PACKAGE_ERROR
+            type: Types.CHOOSE_PACKAGE_ERROR
         }), 500);
     };
 };
@@ -356,43 +267,40 @@ export const changeRegion = (region, status) => {
     return (dispatch) => {
         if (status === 'watchPosition') {
             dispatch({
-                type: CHANGE_REGION,
+                type: Types.CHANGE_REGION,
                 payload: region
             });
         } else {
             dispatch({
-                type: CHANGE_REGION_1,
+                type: Types.CHANGE_REGION_1,
                 payload: region
             });
         }
     };
-    // return {
-    //     type: CHANGE_REGION,
-    //     payload: { region, status }
-    // };
 };
+
 export const inputEmail = (text) => {
     return {
-        type: INPUT_EMAIL,
+        type: Types.INPUT_EMAIL,
         payload: text
     };
 };
 export const inputPassword = (text) => {
     return {
-        type: INPUT_PASSWORD,
+        type: Types.INPUT_PASSWORD,
         payload: text
     };
 };
 export const loginSuccess = () => {
     return {
-        type: LOGIN_SUCCESS,
+        type: Types.LOGIN_SUCCESS,
     };
 };
 export const loginFail = (errorCode) => {
     return (dispatch) => {
         dispatch(loadSpinner());
         setTimeout(() => dispatch({
-            type: LOGIN_FAIL,
+            type: Types.LOGIN_FAIL,
             payload: errorCode
         }), 500);
     };
@@ -400,13 +308,13 @@ export const loginFail = (errorCode) => {
 
 export const loadSpinner = () => {
     return {
-        type: LOADING
+        type: Types.LOADING
     };
 };
 
 export const disableModal = () => {
     return {
-        type: DISABLE_MODAL
+        type: Types.DISABLE_MODAL
     };
 };
 
@@ -414,7 +322,7 @@ export const verifyCodeForReceivingPackage = (result) => {
     return (dispatch) => {
         dispatch(waitForCheck());
         setTimeout(() => dispatch({
-            type: VERIFY_RECEIVING_PACKAGE,
+            type: Types.VERIFY_RECEIVING_PACKAGE,
             payload: result
         }), 500);
     };
@@ -423,14 +331,14 @@ export const verifyCodeForReceivingPackageFailed = (result) => {
     return (dispatch) => {
         dispatch(waitForCheck());
         setTimeout(() => dispatch({
-            type: VERIFY_RECEIVING_PACKAGE_FAILED,
+            type: Types.VERIFY_RECEIVING_PACKAGE_FAILED,
             payload: result
         }), 500);
     };
 };
 export const waitForCheck = () => {
     return {
-        type: LOAD_SPINNER
+        type: Types.LOAD_SPINNER
     };
 };
 
@@ -444,7 +352,7 @@ export const getPickedPackageList = (userId) => {
                 } else {
                     arr = [];
                 }
-                dispatch({ type: GET_PICKED_PACKAGE_LIST, payload: arr });
+                dispatch({ type: Types.GET_PICKED_PACKAGE_LIST, payload: arr });
         });
     };
 };
@@ -459,7 +367,7 @@ export const getDeliveringPackageList = (userId) => {
                 } else {
                     arr = [];
                 }
-                dispatch({ type: GET_DELIVERING_PACKAGE_LIST, payload: arr });
+                dispatch({ type: Types.GET_DELIVERING_PACKAGE_LIST, payload: arr });
         });
     };
 };
@@ -475,7 +383,7 @@ export const getAllPickedPackageList = (userId) => {
                 } else {
                     arr = [];
                 }
-                dispatch({ type: GET_ALL_PICKED_PACKAGE_LIST, payload: arr });
+                dispatch({ type: Types.GET_ALL_PICKED_PACKAGE_LIST, payload: arr });
         });
     };
 };
@@ -485,7 +393,7 @@ export const verifyCodeForDeliveringSuccess = (result) => {
     return (dispatch) => {
         dispatch(waitForCheck());
         setTimeout(() => dispatch({
-            type: VERIFY_DELIVERING_SUCCESS,
+            type: Types.VERIFY_DELIVERING_SUCCESS,
             payload: result
         }), 500);
     };
@@ -493,7 +401,7 @@ export const verifyCodeForDeliveringSuccess = (result) => {
 
 export const findShortestRoute = (result) => {
     return {
-        type: FIND_SHORTEST_ROUTE,
+        type: Types.FIND_SHORTEST_ROUTE,
         payload: result
     };
 };
@@ -502,38 +410,38 @@ export const logOut = () => {
     return (dispatch) => {
         dispatch(loadSpinner());
         setTimeout(() => dispatch({
-            type: LOG_OUT,
+            type: Types.LOG_OUT,
         }), 500);
     };
 };
 
 export const refreshData = () => {
     return {
-        type: REFRESH_DATA
+        type: Types.REFRESH_DATA
     };
 };
 
 export const isOnline = (result) => {
     if (result) {
         return {
-            type: IS_ONLINE
+            type: Types.IS_ONLINE
         };
     } 
     return {
-        type: IS_ONLINE_ERROR
+        type: Types.IS_ONLINE_ERROR
     };
 };
 
 export const getHistoryList = (result) => {
     return {
-        type: GET_HISTORY_LIST,
+        type: Types.GET_HISTORY_LIST,
         payload: result
     };
 };
 
 export const getOutCome = (result) => {
     return {
-        type: GET_OUT_COME,
+        type: Types.GET_OUT_COME,
         payload: result
     };
 };
@@ -563,7 +471,6 @@ const onCheckSameLocationPackage = (list) => {
             }
         }
     }
-    // console.log(sameLocation);
     return sameLocation;
 };
 
@@ -583,7 +490,6 @@ const onCheckDifferentLocationPackage = (packageList, sameLocationPackageList) =
         }
         count = 0;
     }
-    // console.log(others);
     return others;
 };
 
@@ -597,26 +503,6 @@ const onOneLocationPackageList = (packageList, item) => {
     }
     return list;
 };
-
-// const onDifferentLocationChosenPackageList = (diffrentLocationChosenPackageList, tmp) => {
-//     let i = 0;
-//     let j = 0;
-//     let count = 0;
-//     const list = [];
-//     for (i = 0; i < diffrentLocationChosenPackageList.length; i++) {
-//         for (j = 0; j < tmp.length; j++) {
-//             if (diffrentLocationChosenPackageList[i].pickup_latitude === tmp[j].pickup_latitude &&
-//                 diffrentLocationChosenPackageList[i].pickup_longitude === tmp[j].pickup_longitude && tmp[j].status === 1) {
-//                     count++;
-//             }
-//         } 
-//         if (count === 0) {
-//             list.push(diffrentLocationChosenPackageList[i]);
-//         }
-//     }
-//     return list;
-// }; 
-
 
 const onCheckNoPickedUpPackage = (userId, list) => {
     let arr = [];

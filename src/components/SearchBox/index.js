@@ -12,15 +12,17 @@ class SearchBox extends Component {
     componentWillReceiveProps(nextProps) {
         (nextProps.isExisted) ? this.setState({ disabled: false }) : this.setState({ disabled: true });
     }
-    
+    // check if having final destination
     onCheck = () => {
         this.props.haveFinalDestination();
     }
+    // get input field
     handleGetDropOff = (text) => {
         const { region } = this.props;
         this.props.getDropOff(text);
         this.props.getAddressPredictions(text, { region });
     }
+    // delete input field if clicking 'delete' button
     deleteAddress = (text) => {
         this.props.deleteResultAddress(text);
         Keyboard.dismiss();
@@ -39,7 +41,7 @@ class SearchBox extends Component {
     
                         <Input 
                             disabled={this.state.disabled}
-                            style={styles.inputSearch} placeholder="Choose destination location" 
+                            style={styles.inputSearch} placeholder="Choose final destination" 
                             onChangeText={
                                 (text) => this.handleGetDropOff(text)
                             }

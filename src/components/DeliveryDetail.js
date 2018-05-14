@@ -16,29 +16,35 @@ class DeliveryDetail extends Component {
         });
     }
     componentDidMount() {
+        // refresh data of previous screen
         this.props.deleteData();
     }
     componentWillReceiveProps(nextProps) {
         if (nextProps.error !== this.props.error && nextProps.error) {
+            // if this package has been picked, show error modal
             this.setState({ showModal: true });
         }
         if (nextProps.route !== this.props.route) {
+            // After succesfully picking up a package, go back to Home screen and update 'Direction' button
             this.setState({ showSpinner: false });
             this.props.navigation.state.params.updateDirectionButton();
             this.onDismiss();
         }
     }
+    // Pick up package. If in offline mode or reached maximum package, can not pick more.
     onChoosePackage = (packageId) => {
         const { numberOfPackage } = this.props.navigation.state.params;
-            if (user.is_online !== 1) Alert.alert('You cannot pick up a new package since you are in offline mode'); 
-            else {
-                if ((user.rating > 3 && numberOfPackage < 4) || (user.rating < 4 && numberOfPackage < 3)) {
-                    this.props.waitForCheck();
-                    this.props.choosePackage(packageId);
-                } else {
-                    Alert.alert('You reached your maximum packages!');
+            AsyncStorage.getItem('is_online', (error, result) => {
+                if (result === '0') Alert.alert('You cannot pick up a new package since you are in offline mode'); 
+                else {
+                    if ((user.rating > 3 && numberOfPackage < 4) || (user.rating < 4 && numberOfPackage < 3)) {
+                        this.props.waitForCheck();
+                        this.props.choosePackage(packageId);
+                    } else {
+                        Alert.alert('You reached your maximum packages!');
+                    }
                 }
-            }
+            });
     }
 
     onDismiss() {
@@ -104,15 +110,6 @@ class DeliveryDetail extends Component {
                                 PICK
                             </SubmitButton>
                         }
-                        {/* { 
-                            (status === 2) &&
-                            <SubmitButton 
-                                onPress={() => console.log('ABC')} 
-                                style={{ backgroundColor: '#48A814' }}
-                            >
-                                RECEIVE PACKAGE
-                            </SubmitButton>
-                        } */}
                         </View>
                     </View>
                     <Modal isVisible={this.props.loading} >
@@ -124,7 +121,7 @@ class DeliveryDetail extends Component {
                         isVisible={this.state.showModal}
                         title='This package has been picked up!'
                         subtitle='Please choose the other packages'
-                        onPress={() => { this.setState({ showModal: false }); this.props.navigation.navigate.goBack(); }}
+                        onPress={() => { this.setState({ showModal: false }); this.props.navigation.goBack(); }}
                     />
                 </Container>
             </Container>

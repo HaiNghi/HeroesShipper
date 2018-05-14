@@ -20,6 +20,7 @@ class SlideMenu extends Component {
     }
     
     componentDidMount() {
+        // if we check 'Don't show modal again' in sign out function, the modal will not show again
         AsyncStorage.getItem('user_info', (error, result) => {
             this.setState({ user_info: JSON.parse(result) }, function () {
                 AsyncStorage.getItem(`${this.state.user_info.user_id}`, (er, res) => {
@@ -34,6 +35,7 @@ class SlideMenu extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.logOutSuccess && this.props.logOutSuccess !== nextProps.logOutSuccess) {
+            //delete data and move to login screen
             this.props.refreshData();
             this.props.navigation.navigate('Login');
             AsyncStorage.removeItem('user_info');
@@ -45,11 +47,13 @@ class SlideMenu extends Component {
         this.setState({ emergency: true });
     }
     
+    //save the status if checked the box in sign out modal
     onCheckBox = () => {
         this.setState({ checked: true });
         AsyncStorage.setItem(`${this.state.user_info.user_id}`, 'OK');
     }
 
+    //sign out function
     onCheckModal = () => {
         if (this.state.showModalAgain) {
             this.setState({ showConfirmModal: true });
@@ -60,9 +64,13 @@ class SlideMenu extends Component {
     }
 
     navigatToScreen(route) {
+        if (route === 'Histories') {
+            this.props.navigation.navigate('DrawerClose');
+        }
         this.props.navigation.navigate(route);
     }
 
+    //sign out function when clicking 'OK' button in sign out modal
     logOut = () => {
         this.setState({ showConfirmModal: false });
         this.props.loadingSpinner();
@@ -70,7 +78,6 @@ class SlideMenu extends Component {
     }
 
     render() {
-        // console.log(obj);
         return (
             <Container>
                 <Header style={{ height: 200, backgroundColor: '#ECE8E7' }}>

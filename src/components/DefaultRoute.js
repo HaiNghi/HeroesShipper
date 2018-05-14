@@ -34,7 +34,6 @@ class DefaultRoute extends Component {
                         deleteResultAddress={this.props.deleteResultAddress}
                         deleted={this.props.deleted}
                         navigation={this.props.navigation}
-                        showDropOff={true}
                     />
                 }
                 

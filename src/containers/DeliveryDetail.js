@@ -1,13 +1,8 @@
 import { connect } from 'react-redux';
 
 import DeliveryDetail from '../components/DeliveryDetail';
-import {
-    deleteData,
-    choosePackage,
-    choosePackageError,
-    waitForCheck
-} from '../actions';
-import { doChoosePackage } from '../api/api';
+import * as Actions from '../actions';
+import * as API from '../api/api';
 
 const mapStateToProps = (state) => ({
     // loading: state.map.loading,
@@ -18,13 +13,13 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
     deleteData: () => {
-        dispatch(deleteData());
+        dispatch(Actions.deleteData());
     },
     waitForCheck: () => {
-        dispatch(waitForCheck());
+        dispatch(Actions.waitForCheck());
     },
     choosePackage: (packageId) => {
-        doChoosePackage(dispatch, choosePackage, choosePackageError, packageId);
+        API.doChoosePackage(dispatch, Actions.choosePackage, Actions.choosePackageError, packageId);
     },
     
 });
